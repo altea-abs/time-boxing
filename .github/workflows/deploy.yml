@@ -45,7 +45,7 @@ jobs:
       - name: Build with Nuxt
         run: npm run generate
         env:
-          NUXT_APP_BASE_URL: /timeboxing/
+          NUXT_APP_BASE_URL: /time-boxing/
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
