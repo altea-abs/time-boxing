@@ -7,6 +7,8 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify']
   },
+  // Disable SSR for GitHub Pages SPA deployment
+  ssr: false,
   // GitHub Pages configuration
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL || '/',
