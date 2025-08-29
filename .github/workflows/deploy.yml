@@ -29,14 +29,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
           
-      - name: Clean npm cache and install dependencies
+      - name: Clean install dependencies
         run: |
+          # Clear npm cache and node_modules for clean install
           npm cache clean --force
           rm -rf node_modules package-lock.json
-          npm install
+          # Install with legacy peer deps to avoid conflicts
+          npm install --legacy-peer-deps
+          # Verify installation
+          npm list --depth=0
         
       - name: Build with Nuxt
         run: npm run generate
