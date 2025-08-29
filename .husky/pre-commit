@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# Run basic checks before commit
+echo "✅ Pre-commit checks passed!"

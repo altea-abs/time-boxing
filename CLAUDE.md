@@ -155,3 +155,53 @@ store.priorities[0] = newTask
 - 🔄 Future: Timeboxing/scheduling features
 
 The architecture provides clear separation of concerns, type safety, and reactive configuration management suitable for a productivity/timeboxing application.
+
+## Git Commit Guidelines
+
+This project uses **Conventional Commits** for standardized commit messages. When creating commits, always follow this format:
+
+### Commit Message Format
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Commit Types
+- **feat**: ✨ New feature
+- **fix**: 🐛 Bug fix  
+- **docs**: 📚 Documentation changes
+- **style**: 💎 Code style changes (formatting, etc.)
+- **refactor**: 📦 Code refactoring
+- **perf**: 🚀 Performance improvements
+- **test**: 🚨 Adding or updating tests
+- **build**: 🛠 Build system or dependency changes
+- **ci**: ⚙️ CI/CD configuration changes
+- **chore**: ♻️ Other maintenance tasks
+- **revert**: 🗑 Revert previous commit
+- **wip**: 🚧 Work in progress (for development)
+
+### Examples
+```bash
+feat(auth): add user authentication system
+fix(ui): resolve mobile responsiveness issue
+docs(readme): update installation instructions
+chore(deps): upgrade dependencies to latest versions
+ci(deploy): add GitHub Pages deployment workflow
+```
+
+### Breaking Changes
+For breaking changes, add `!` after the type/scope and include `BREAKING CHANGE:` in the footer:
+```bash
+feat(api)!: redesign user authentication API
+
+BREAKING CHANGE: authentication tokens are now JWT instead of session-based
+```
+
+### Tools Available
+- `npm run commit` - Interactive commit with Commitizen
+- `git commit` - Regular commit (validated by CommitLint)
+
+Always use meaningful commit messages that clearly describe the change and its impact.

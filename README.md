@@ -189,6 +189,48 @@ const defaultGridConfig = {
 - **Composition API** per logica componenti
 - **Pinia stores** per state management
 - **Vuetify components** per UI consistency
+- **Conventional Commits** per messaggi git standardizzati
+
+### 📝 Conventional Commits
+
+Questo progetto usa **Conventional Commits** per messaggi git standardizzati e changelog automatico.
+
+#### Comandi Disponibili
+```bash
+npm run commit        # Commit interattivo con Commitizen
+npm run commit:retry  # Riprova ultimo commit fallito
+git commit -m "..."   # Commit normale (validato da CommitLint)
+```
+
+#### Formato Commit
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+#### Tipi Disponibili
+- **feat**: ✨ Nuova funzionalità
+- **fix**: 🐛 Correzione bug
+- **docs**: 📚 Solo documentazione
+- **style**: 💎 Modifiche stilistiche
+- **refactor**: 📦 Refactoring codice
+- **perf**: 🚀 Miglioramenti performance
+- **test**: 🚨 Test aggiunti/modificati
+- **build**: 🛠 Build system/dipendenze
+- **ci**: ⚙️ Configurazione CI/CD
+- **chore**: ♻️ Maintenance generale
+- **revert**: 🗑 Ripristino commit precedente
+
+#### Esempi
+```bash
+feat(auth): add user login functionality
+fix(ui): resolve button alignment issue
+docs(readme): update installation instructions
+chore(deps): upgrade Nuxt to v4.0.3
+```
 
 ## 📝 License
 
