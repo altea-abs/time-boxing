@@ -7,6 +7,16 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify']
   },
+  // GitHub Pages configuration
+  app: {
+    baseURL: process.env.NUXT_APP_BASE_URL || '/',
+    buildAssetsDir: 'assets/'
+  },
+  nitro: {
+    prerender: {
+      routes: ['/']
+    }
+  },
   runtimeConfig: {
     // Server-side runtime config (private)
     // Placeholder per future configurazioni server
