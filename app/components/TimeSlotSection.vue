@@ -177,6 +177,7 @@
         size="small"
         class="mr-2"
         :disabled="!timeSlotsStore.canUndo"
+        title="Annulla (Ctrl/Cmd+Z)"
       >
         Annulla
       </v-btn>
@@ -188,6 +189,7 @@
         size="small"
         class="mr-4"
         :disabled="!timeSlotsStore.canRedo"
+        title="Ripristina (Ctrl/Cmd+Y o Ctrl/Cmd+Shift+Z)"
       >
         Ripristina
       </v-btn>
@@ -492,6 +494,26 @@ const handleKeyDown = (event: KeyboardEvent) => {
     event.preventDefault()
     goToToday()
     console.log('🎯 Alt+T pressed - navigating to today')
+  }
+
+  // Undo/Redo shortcuts
+  const isCtrlLike = event.ctrlKey || event.metaKey
+  if (isCtrlLike) {
+    const k = event.key.toLowerCase()
+    if (k === 'z') {
+      event.preventDefault()
+      if (event.shiftKey) {
+        timeSlotsStore.redo()
+        console.log('↪️ Redo via Ctrl/Cmd+Shift+Z')
+      } else {
+        timeSlotsStore.undo()
+        console.log('↩️ Undo via Ctrl/Cmd+Z')
+      }
+    } else if (k === 'y') {
+      event.preventDefault()
+      timeSlotsStore.redo()
+      console.log('↪️ Redo via Ctrl/Cmd+Y')
+    }
   }
 }
 
