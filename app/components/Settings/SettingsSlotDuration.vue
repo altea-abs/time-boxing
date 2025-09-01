@@ -30,7 +30,7 @@ interface SettingsSlotDurationEmits {
   (e: 'update:slotDuration', value: number): void
 }
 
-const props = withDefaults(defineProps<SettingsSlotDurationProps>(), {
+withDefaults(defineProps<SettingsSlotDurationProps>(), {
   title: 'Durata slot',
   description: 'Durata di ogni time slot in minuti'
 })
