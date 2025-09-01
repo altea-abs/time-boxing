@@ -253,3 +253,46 @@ refactor(components): extract HelpDialog into dedicated component
 - Avoid feature creep and scope expansion
 
 **This ensures focused development and prevents unwanted complexity.**
+
+### IMPORTANT: Incremental Development and Commits
+**Claude MUST develop and commit features incrementally using atomic commits.** Never bundle multiple features or components in a single commit, even if they're related.
+
+#### Incremental Development Principles:
+1. **One Feature Per Commit**: Each commit should contain exactly one logical change
+2. **Atomic Commits**: Each commit should be self-contained and functional
+3. **Sequential Implementation**: Build features step-by-step, committing each step
+4. **Clear Commit Messages**: Each commit message should reflect the single change made
+
+#### Implementation Process:
+1. **Break Down Tasks**: Divide complex features into smaller, independent components
+2. **Implement Incrementally**: Code one component at a time
+3. **Commit Immediately**: Commit each component as soon as it's complete
+4. **Test Each Step**: Ensure each commit works before moving to the next
+
+#### Example - Settings Panel Request:
+**User Request**: "Add settings panel to change number of priorities"
+
+**✅ Correct Incremental Approach:**
+1. `feat(ui): add settings button to header` - Add settings icon and click handler
+2. `feat(components): create basic SettingsDialog component` - Create modal structure
+3. `feat(settings): add priority number control to dialog` - Add slider/input for priorities
+4. `feat(stores): create useSettings store for dynamic config` - Add settings persistence
+5. `fix(priorities): integrate settings store with priorities` - Connect stores
+
+**❌ Wrong Monolithic Approach:**
+1. `feat(settings): add comprehensive settings panel with dynamic configuration` - Everything in one commit
+
+#### Benefits:
+- **Clear History**: Easy to understand what changed when
+- **Easy Debugging**: Pinpoint exactly which change caused issues
+- **Better Reviews**: Each change can be reviewed independently
+- **Rollback Safety**: Can revert specific features without affecting others
+- **Conventional Commits**: Proper semantic versioning and changelog generation
+
+#### When Working on Multiple Related Changes:
+- Still commit each logical piece separately
+- Use consistent commit message prefixes to show relationship
+- Maintain functional state after each commit
+- Test thoroughly between commits
+
+**This ensures clean git history and professional development practices.**
