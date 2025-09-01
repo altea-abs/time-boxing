@@ -192,6 +192,8 @@ store.priorities[0] = newTask
 
 ### Global Shortcuts
 - **`Alt+S`**: Open/close settings dialog
+- **`Alt+H`**: Open/close help dialog
+- **`Alt+G`**: Open GitHub repository in new tab
 - **`Esc`**: Close any open modal/dialog
 - **`Ctrl+Drag`**: Multi-assignment in time slots
 
