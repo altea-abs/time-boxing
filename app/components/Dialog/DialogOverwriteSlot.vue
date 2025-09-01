@@ -39,6 +39,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn variant="text" @click="handleCancel">Annulla</v-btn>
+        <v-btn v-if="canSwap" color="primary" variant="elevated" @click="handleSwap">Scambia</v-btn>
         <v-btn color="warning" variant="elevated" @click="handleConfirm">Sovrascrivi</v-btn>
       </v-card-actions>
     </v-card>
@@ -53,11 +54,13 @@ interface Props {
   visible: boolean
   targetSlot: TimeSlot | null
   newTask: Task | null
+  canSwap?: boolean
 }
 
 interface Emits {
   (e: 'confirm'): void
   (e: 'cancel'): void
+  (e: 'swap'): void
 }
 
 const props = defineProps<Props>()
@@ -77,9 +80,11 @@ const slotTime = computed(() => {
 
 const currentTaskText = computed(() => props.targetSlot?.task?.text || '—')
 const newTaskText = computed(() => props.newTask?.text || '—')
+const canSwap = computed(() => props.canSwap === true)
 
 const handleConfirm = () => emit('confirm')
 const handleCancel = () => emit('cancel')
+const handleSwap = () => emit('swap')
 </script>
 
 <style scoped>
@@ -88,4 +93,3 @@ const handleCancel = () => emit('cancel')
   align-items: center;
 }
 </style>
-

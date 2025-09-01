@@ -195,7 +195,9 @@
       :visible="showOverwriteConfirm"
       :target-slot="pendingDropSlot"
       :new-task="pendingDropTask"
+      :can-swap="canSwap"
       @confirm="confirmOverwrite"
+      @swap="confirmSwap"
       @cancel="cancelOverwrite"
     />
   </div>
@@ -234,6 +236,7 @@ const touchedSlots = ref<Set<string>>(new Set())
 const showOverwriteConfirm = ref(false)
 const pendingDropSlot = ref<TimeSlot | null>(null)
 const pendingDropTask = ref<Task | null>(null)
+const canSwap = ref(false)
 
 const formatDate = (date: Date): string => {
   return new Intl.DateTimeFormat('it-IT', {
@@ -331,6 +334,9 @@ const handleDrop = (event: DragEvent, slot: TimeSlot) => {
         // Occupied: ask for overwrite confirmation
         pendingDropSlot.value = slot
         pendingDropTask.value = task
+        // Swap is possible only if dragged task is already assigned to another slot
+        const source = timeSlotsStore.findSlotByTask(task.id)
+        canSwap.value = !!(source && source.id !== slot.id)
         showOverwriteConfirm.value = true
         return
       }
@@ -516,6 +522,69 @@ const cancelOverwrite = () => {
   showOverwriteConfirm.value = false
   pendingDropSlot.value = null
   pendingDropTask.value = null
+  resetDragState()
+}
+
+const confirmSwap = () => {
+  if (!pendingDropSlot.value || !pendingDropTask.value) {
+    cancelOverwrite()
+    return
+  }
+
+  const target = pendingDropSlot.value
+  const newTask = pendingDropTask.value
+  const source = timeSlotsStore.findSlotByTask(newTask.id)
+  const oldTargetTask = target.task
+
+  if (!source || source.id === target.id || !oldTargetTask) {
+    // Fallback to overwrite if swap not viable
+    confirmOverwrite()
+    return
+  }
+
+  // Step 1: clear both slots
+  const clearedSource = timeSlotsStore.removeTaskFromSlot(source.id)
+  const clearedTarget = timeSlotsStore.removeTaskFromSlot(target.id)
+
+  if (!clearedSource || !clearedTarget) {
+    console.warn('❌ Swap: failed to clear slots')
+    // Attempt to restore (best-effort)
+    if (!clearedSource) {
+      timeSlotsStore.assignTaskToSlot(newTask, source.id)
+    }
+    if (!clearedTarget && oldTargetTask) {
+      timeSlotsStore.assignTaskToSlot(oldTargetTask, target.id)
+    }
+    cancelOverwrite()
+    return
+  }
+
+  // Step 2: assign dragged (newTask) to target
+  const assignedNewToTarget = timeSlotsStore.assignTaskToSlot(newTask, target.id)
+  if (!assignedNewToTarget) {
+    console.warn('❌ Swap: failed assigning new task to target, restoring source')
+    timeSlotsStore.assignTaskToSlot(newTask, source.id)
+    cancelOverwrite()
+    return
+  }
+
+  // Step 3: assign old target task to source
+  const assignedOldToSource = timeSlotsStore.assignTaskToSlot(oldTargetTask, source.id)
+  if (!assignedOldToSource) {
+    console.warn('❌ Swap: failed assigning old target to source, reverting')
+    // Revert target back to old task, put new back to source
+    timeSlotsStore.removeTaskFromSlot(target.id)
+    timeSlotsStore.assignTaskToSlot(oldTargetTask, target.id)
+    timeSlotsStore.assignTaskToSlot(newTask, source.id)
+    cancelOverwrite()
+    return
+  }
+
+  // Success
+  showOverwriteConfirm.value = false
+  pendingDropSlot.value = null
+  pendingDropTask.value = null
+  canSwap.value = false
   resetDragState()
 }
 </script>
