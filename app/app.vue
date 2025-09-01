@@ -28,7 +28,7 @@
             variant="text"
             size="default"
             @click="showSettings = !showSettings"
-            title="Impostazioni"
+            title="Impostazioni (Alt+S)"
           />
           <v-btn
             icon="mdi-github"
@@ -74,6 +74,24 @@ const showSettings = ref(false)
 const handlePriorityToggled = (task) => {
   console.log('Priority toggled for task:', task)
 }
+
+// Keyboard shortcuts
+onMounted(() => {
+  const handleKeydown = (event) => {
+    // Alt+S to open settings
+    if (event.altKey && event.key.toLowerCase() === 's') {
+      event.preventDefault()
+      showSettings.value = !showSettings.value
+    }
+  }
+  
+  document.addEventListener('keydown', handleKeydown)
+  
+  // Cleanup on unmount
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleKeydown)
+  })
+})
 </script>
 
 <style>
