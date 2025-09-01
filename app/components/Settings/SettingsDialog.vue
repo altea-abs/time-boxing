@@ -16,40 +16,46 @@
       <v-card-text>
         <div class="settings-content">
           
-          <!-- Priority Settings Section -->
-          <div class="settings-section">
-            <h3 class="settings-section-title">
-              <v-icon icon="mdi-star" class="mr-2" color="warning" />
-              Gestione Priorità
-            </h3>
-            
-            <SettingsPriority
-              :max-priorities="localMaxPriorities"
-              @update:max-priorities="localMaxPriorities = $event"
-            />
+          <div class="settings-columns">
+            <!-- Left Column: Priority Settings -->
+            <div class="settings-column">
+              <div class="settings-section">
+                <h3 class="settings-section-title">
+                  <v-icon icon="mdi-star" class="mr-2" color="warning" />
+                  Gestione Priorità
+                </h3>
+                
+                <SettingsPriority
+                  :max-priorities="localMaxPriorities"
+                  @update:max-priorities="localMaxPriorities = $event"
+                />
+              </div>
+            </div>
+
+            <!-- Right Column: Time Grid Settings -->
+            <div class="settings-column">
+              <div class="settings-section">
+                <h3 class="settings-section-title">
+                  <v-icon icon="mdi-clock-outline" class="mr-2" color="info" />
+                  Orari di Lavoro
+                </h3>
+                
+                <SettingsTimeRange
+                  :start-hour="localStartHour"
+                  :end-hour="localEndHour"
+                  @update:start-hour="localStartHour = $event"
+                  @update:end-hour="localEndHour = $event"
+                />
+
+                <SettingsSlotDuration
+                  :slot-duration="localSlotDuration"
+                  @update:slot-duration="localSlotDuration = $event"
+                />
+              </div>
+            </div>
           </div>
 
-          <!-- Time Grid Settings Section -->
-          <div class="settings-section">
-            <h3 class="settings-section-title">
-              <v-icon icon="mdi-clock-outline" class="mr-2" color="info" />
-              Orari di Lavoro
-            </h3>
-            
-            <SettingsTimeRange
-              :start-hour="localStartHour"
-              :end-hour="localEndHour"
-              @update:start-hour="localStartHour = $event"
-              @update:end-hour="localEndHour = $event"
-            />
-
-            <SettingsSlotDuration
-              :slot-duration="localSlotDuration"
-              @update:slot-duration="localSlotDuration = $event"
-            />
-          </div>
-
-          <!-- Preview Section -->
+          <!-- Preview Section (Full Width) -->
           <div class="settings-section">
             <h3 class="settings-section-title">
               <v-icon icon="mdi-eye" class="mr-2" color="success" />
@@ -86,30 +92,34 @@
         </div>
       </v-card-text>
       
-      <v-card-actions>
+      <v-card-actions class="settings-actions">
         <v-btn
           color="grey"
           variant="outlined"
           @click="resetToDefaults"
           prepend-icon="mdi-restore"
+          class="reset-btn"
         >
           Ripristina Default
         </v-btn>
-        <v-spacer />
-        <v-btn
-          color="grey"
-          variant="text"
-          @click="close"
-        >
-          Annulla
-        </v-btn>
-        <v-btn
-          color="primary"
-          @click="saveSettings"
-          prepend-icon="mdi-content-save"
-        >
-          Salva Modifiche
-        </v-btn>
+        <div class="action-buttons">
+          <v-btn
+            color="grey"
+            variant="text"
+            @click="close"
+            class="cancel-btn"
+          >
+            Annulla
+          </v-btn>
+          <v-btn
+            color="primary"
+            @click="saveSettings"
+            prepend-icon="mdi-content-save"
+            class="save-btn"
+          >
+            Salva Modifiche
+          </v-btn>
+        </div>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -128,7 +138,6 @@ const props = defineProps<SettingsDialogProps>()
 const emit = defineEmits<SettingsDialogEmits>()
 
 // Stores
-const prioritiesStore = usePrioritiesStore()
 const timeSlotsStore = useTimeSlotsStore()
 
 // Reactive visibility
@@ -142,19 +151,6 @@ const localMaxPriorities = ref(5)
 const localStartHour = ref(9)
 const localEndHour = ref(18)
 const localSlotDuration = ref(30)
-
-// Options for selects
-const hourOptions = computed(() => {
-  const options = []
-  for (let hour = 6; hour <= 22; hour++) {
-    options.push({
-      title: formatHour(hour),
-      value: hour
-    })
-  }
-  return options
-})
-
 
 // Computed for preview
 const totalSlotsPreview = computed(() => {
@@ -188,7 +184,6 @@ watch(isVisible, (newValue) => {
   }
 })
 
-// Helper functions
 const formatHour = (hour: number): string => {
   return `${hour.toString().padStart(2, '0')}:00`
 }
@@ -239,6 +234,18 @@ const close = () => {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+.settings-columns {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.settings-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .settings-section {
@@ -325,17 +332,40 @@ const close = () => {
   border-radius: 4px;
 }
 
-@media (max-width: 600px) {
-  .setting-item {
+.settings-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .settings-columns {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .settings-actions {
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;
   }
   
-  .setting-control {
-    min-width: unset;
+  .reset-btn,
+  .cancel-btn,
+  .save-btn {
+    width: 100%;
   }
   
-  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 </style>
