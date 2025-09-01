@@ -153,11 +153,20 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
       return false
     }
     
-    // Simply assign the task to the target slot (allow multiple assignments)
+    // Get current priority status from priorities store
+    const prioritiesStore = usePrioritiesStore()
+    const isPriorityTask = prioritiesStore.findTaskById(task.id) !== null
+    
+    console.log('⭐ Task priority status:', { taskId: task.id, isPriority: isPriorityTask })
+    
+    // Assign the task to the target slot with updated priority status
     const newTimeSlots = [...timeSlots.value]
     newTimeSlots[slotIndex] = {
       ...slot,
-      task: { ...task }
+      task: { 
+        ...task,
+        isPriority: isPriorityTask  // Update priority status based on current priorities store
+      }
     }
     
     console.log('🎯 Task assigned to slot (multiple assignments allowed):', slot.id)
