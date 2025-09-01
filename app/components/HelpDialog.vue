@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isVisible" max-width="600" persistent>
+  <v-dialog v-model="isVisible" max-width="600" @keydown.esc="close">
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon icon="mdi-help-circle" class="mr-2" color="primary" />
@@ -51,6 +51,30 @@
               Scorciatoie
             </h3>
             <div class="shortcuts-list">
+              <div class="shortcut-item">
+                <div class="shortcut-keys">
+                  <kbd>Alt</kbd> + <kbd>S</kbd>
+                </div>
+                <span>Apre/chiude le impostazioni</span>
+              </div>
+              <div class="shortcut-item">
+                <div class="shortcut-keys">
+                  <kbd>Alt</kbd> + <kbd>H</kbd>
+                </div>
+                <span>Apre/chiude questa guida</span>
+              </div>
+              <div class="shortcut-item">
+                <div class="shortcut-keys">
+                  <kbd>Alt</kbd> + <kbd>G</kbd>
+                </div>
+                <span>Apre il repository GitHub</span>
+              </div>
+              <div class="shortcut-item">
+                <div class="shortcut-keys">
+                  <kbd>Esc</kbd>
+                </div>
+                <span>Chiude qualsiasi dialog aperto</span>
+              </div>
               <div class="shortcut-item">
                 <div class="shortcut-keys">
                   <kbd>Ctrl</kbd> + <kbd>Drag</kbd>
@@ -180,6 +204,7 @@ const totalSlots = computed(() => timeSlots.value.length)
 const close = () => {
   emit('update:modelValue', false)
 }
+
 </script>
 
 <style scoped>
