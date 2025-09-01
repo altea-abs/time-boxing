@@ -1,9 +1,9 @@
 <template>
   <v-alert
     v-if="visible"
-    
-    border-color="error"
+    variant="tonal"
     border="start"
+    color="error"
     closable
     @click:close="handleClose"
     class="alert-max-priority"
