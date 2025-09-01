@@ -1,9 +1,9 @@
 <template>
-  <v-dialog v-model="isVisible" max-width="600" @keydown.esc="close">
-    <v-card>
-      <v-card-title class="d-flex align-center">
+  <v-dialog v-model="isVisible" max-width="800" @keydown.esc="close">
+    <v-card class="help-dialog">
+      <v-card-title class="d-flex align-center px-6 py-4">
         <v-icon icon="mdi-help-circle" class="mr-2" color="primary" />
-        Come usare l'app
+        Guida Interattiva
         <v-spacer />
         <v-btn
           icon="mdi-close"
@@ -13,164 +13,93 @@
         />
       </v-card-title>
       
-      <v-card-text>
-        <div class="help-content">
-          <!-- Brain Dump Section -->
-          <div class="help-section">
-            <h3>
-              <v-icon icon="mdi-brain" class="mr-2" color="primary" />
-              Brain Dump
-            </h3>
-            <p>Aggiungi tutti i tuoi task senza filtri. Clicca sui task per renderli priorità.</p>
-            <v-chip size="small" color="primary" variant="outlined" class="mt-2">
-              Massimo {{ maxPriorities }} priorità
-            </v-chip>
-          </div>
-
-          <!-- Timeboxing Section -->
-          <div class="help-section">
-            <h3>
-              <v-icon icon="mdi-clock-outline" class="mr-2" color="primary" />
-              Timeboxing
-            </h3>
-            <p>Trascina i task negli slot temporali per programmare la tua giornata.</p>
-            <div class="mt-2">
-              <v-chip size="small" color="info" variant="outlined" class="mr-1">
-                30min per slot
-              </v-chip>
-              <v-chip size="small" color="info" variant="outlined">
-                {{ totalSlots }} slot disponibili
-              </v-chip>
-            </div>
-          </div>
-
-          <!-- Shortcuts Section -->
-          <div class="help-section">
-            <h3>
-              <v-icon icon="mdi-keyboard" class="mr-2" color="primary" />
-              Scorciatoie
-            </h3>
-            <div class="shortcuts-list">
-              <div class="shortcut-item">
-                <div class="shortcut-keys">
-                  <kbd>Alt</kbd> + <kbd>S</kbd>
-                </div>
-                <span>Apre/chiude le impostazioni</span>
-              </div>
-              <div class="shortcut-item">
-                <div class="shortcut-keys">
-                  <kbd>Alt</kbd> + <kbd>H</kbd>
-                </div>
-                <span>Apre/chiude questa guida</span>
-              </div>
-              <div class="shortcut-item">
-                <div class="shortcut-keys">
-                  <kbd>Alt</kbd> + <kbd>G</kbd>
-                </div>
-                <span>Apre il repository GitHub</span>
-              </div>
-              <div class="shortcut-item">
-                <div class="shortcut-keys">
-                  <kbd>Esc</kbd>
-                </div>
-                <span>Chiude qualsiasi dialog aperto</span>
-              </div>
-              <div class="shortcut-item">
-                <div class="shortcut-keys">
-                  <kbd>Ctrl</kbd> + <kbd>Drag</kbd>
-                </div>
-                <span>Assegna task a più slot consecutivi</span>
-              </div>
-              <div class="shortcut-item">
-                <div class="shortcut-keys">
-                  <kbd>Click</kbd>
-                </div>
-                <span>Aggiungi/rimuovi task dalle priorità</span>
-              </div>
-              <div class="shortcut-item">
-                <div class="shortcut-keys">
-                  <kbd>Drag</kbd>
-                </div>
-                <span>Da slot occupato evidenzia slot adiacenti liberi</span>
-              </div>
-              <div class="shortcut-item">
-                <div class="shortcut-keys">
-                  <v-icon icon="mdi-toggle-switch" size="small" />
-                </div>
-                <span>Toggle multi-assegnazione per assegnare a più slot</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Notes Section -->
-          <div class="help-section">
-            <h3>
-              <v-icon icon="mdi-notebook" class="mr-2" color="primary" />
-              Note
-            </h3>
-            <p>Usa la sezione note per obiettivi, riflessioni e promemoria della giornata.</p>
-            <div class="mt-2">
-              <v-chip size="small" color="success" variant="outlined" class="mr-1">
-                Auto-save
-              </v-chip>
-              <v-chip size="small" color="success" variant="outlined">
-                1000 caratteri max
-              </v-chip>
-            </div>
-          </div>
-
-          <!-- Tips Section -->
-          <div class="help-section">
-            <h3>
-              <v-icon icon="mdi-lightbulb-outline" class="mr-2" color="warning" />
-              Suggerimenti
-            </h3>
-            <v-list density="compact" class="tips-list">
-              <v-list-item>
-                <template #prepend>
-                  <v-icon icon="mdi-check-circle" color="success" size="small" />
-                </template>
-                <v-list-item-title>Inizia con il Brain Dump: scarica tutti i pensieri</v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <template #prepend>
-                  <v-icon icon="mdi-check-circle" color="success" size="small" />
-                </template>
-                <v-list-item-title>Seleziona max {{ maxPriorities }} priorità per la giornata</v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <template #prepend>
-                  <v-icon icon="mdi-check-circle" color="success" size="small" />
-                </template>
-                <v-list-item-title>Assegna le priorità negli slot temporali</v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <template #prepend>
-                  <v-icon icon="mdi-check-circle" color="success" size="small" />
-                </template>
-                <v-list-item-title>Usa le note per riflettere e pianificare</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </div>
-        </div>
+      <v-card-text class="pa-0">
+        <v-stepper 
+          v-model="currentStep" 
+          class="help-stepper"
+          :items="stepperItems"
+          hide-actions
+          flat
+        >
+          <template #item.1>
+            <HelpBrainDump />
+          </template>
+          
+          <template #item.2>
+            <HelpTimeboxing />
+          </template>
+          
+          <template #item.3>
+            <HelpShortcuts />
+          </template>
+          
+          <template #item.4>
+            <HelpNotes />
+          </template>
+          
+          <template #item.5>
+            <HelpTips />
+          </template>
+        </v-stepper>
       </v-card-text>
       
-      <v-card-actions>
+      <v-card-actions class="px-6 py-4">
         <v-btn
-          color="primary"
+          v-if="currentStep > 1"
           variant="outlined"
-          prepend-icon="mdi-github"
-          href="https://github.com/altea-abs/time-boxing"
-          target="_blank"
-          size="small"
+          @click="previousStep"
+          prepend-icon="mdi-chevron-left"
         >
-          GitHub
+          Precedente
         </v-btn>
+        
         <v-spacer />
-        <v-btn color="primary" @click="close">
+        
+        <div class="step-indicator">
+          {{ currentStep }} di {{ totalSteps }}
+        </div>
+        
+        <v-spacer />
+        
+        <v-btn
+          v-if="currentStep < totalSteps"
+          color="primary"
+          @click="nextStep"
+          append-icon="mdi-chevron-right"
+        >
+          Successivo
+        </v-btn>
+        
+        <v-btn
+          v-else
+          color="primary"
+          variant="elevated"
+          @click="close"
+          prepend-icon="mdi-check"
+        >
           Inizia a usare l'app
         </v-btn>
       </v-card-actions>
+      
+      <div class="quick-actions">
+        <v-btn
+          variant="text"
+          size="small"
+          prepend-icon="mdi-github"
+          href="https://github.com/altea-abs/time-boxing"
+          target="_blank"
+        >
+          GitHub
+        </v-btn>
+        <v-btn
+          variant="text"
+          size="small"
+          @click="skipToEnd"
+          prepend-icon="mdi-skip-next"
+        >
+          Salta la guida
+        </v-btn>
+      </div>
     </v-card>
   </v-dialog>
 </template>
@@ -193,106 +122,163 @@ const isVisible = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-// Get configuration from stores
-const prioritiesStore = usePrioritiesStore()
-const timeSlotsStore = useTimeSlotsStore()
-const { maxPriorities } = storeToRefs(prioritiesStore)
-const { timeSlots } = storeToRefs(timeSlotsStore)
+// Stepper state
+const currentStep = ref(1)
+const totalSteps = 5
 
-const totalSlots = computed(() => timeSlots.value.length)
+// Stepper configuration
+const stepperItems = [
+  {
+    title: 'Brain Dump',
+    subtitle: 'Scarica i pensieri',
+    value: 1
+  },
+  {
+    title: 'Timeboxing',
+    subtitle: 'Pianifica il tempo',
+    value: 2
+  },
+  {
+    title: 'Scorciatoie',
+    subtitle: 'Velocizza il workflow',
+    value: 3
+  },
+  {
+    title: 'Note',
+    subtitle: 'Rifletti e pianifica',
+    value: 4
+  },
+  {
+    title: 'Suggerimenti',
+    subtitle: 'Massimizza il successo',
+    value: 5
+  }
+]
+
+// Navigation methods
+const nextStep = () => {
+  if (currentStep.value < totalSteps) {
+    currentStep.value++
+  }
+}
+
+const previousStep = () => {
+  if (currentStep.value > 1) {
+    currentStep.value--
+  }
+}
+
+const skipToEnd = () => {
+  currentStep.value = totalSteps
+}
 
 const close = () => {
+  // Reset to first step for next time
+  currentStep.value = 1
   emit('update:modelValue', false)
 }
 
+// Reset step when dialog opens
+watch(isVisible, (newValue) => {
+  if (newValue) {
+    currentStep.value = 1
+  }
+})
 </script>
 
 <style scoped>
-.help-content {
-  line-height: 1.6;
+.help-dialog {
+  overflow: hidden;
 }
 
-.help-section {
-  margin-bottom: 2rem;
+.help-stepper {
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.help-section:last-child {
-  margin-bottom: 0;
+:deep(.v-stepper) {
+  background: transparent;
+  box-shadow: none;
 }
 
-.help-section h3 {
-  color: rgb(var(--v-theme-primary));
-  margin-bottom: 0.75rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
+:deep(.v-stepper-header) {
+  background: rgb(var(--v-theme-surface-variant));
+  border-radius: 0;
+  padding: 1rem 2rem;
+  box-shadow: none;
 }
 
-.help-section p {
-  margin-bottom: 0.5rem;
-  color: rgb(var(--v-theme-on-surface));
+:deep(.v-stepper-item) {
+  padding: 0.5rem 1rem;
 }
 
-.shortcuts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
+:deep(.v-stepper-item__avatar) {
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
 }
 
-.shortcut-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem;
-  background: rgba(var(--v-theme-surface-variant), 0.5);
-  border-radius: 6px;
+:deep(.v-stepper-item__avatar.v-stepper-item--complete .v-stepper-item__avatar) {
+  background: rgb(var(--v-theme-success));
 }
 
-.shortcut-keys {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-weight: 600;
-  min-width: 120px;
+:deep(.v-stepper-window) {
+  margin: 0;
+  padding: 0;
+  min-height: 500px;
 }
 
-.shortcut-keys kbd {
-  background: rgb(var(--v-theme-surface));
-  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 4px;
-  padding: 0.125rem 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+:deep(.v-stepper-window-item) {
+  padding: 0;
 }
 
-.tips-list {
-  margin-top: 0.5rem;
-  background: rgba(var(--v-theme-success), 0.05);
-  border-radius: 8px;
-  padding: 0.5rem 0;
-}
-
-:deep(.v-list-item-title) {
+.step-indicator {
   font-size: 0.875rem;
-  line-height: 1.4;
+  font-weight: 600;
+  color: rgb(var(--v-theme-primary));
+  padding: 0.5rem 1rem;
+  background: rgba(var(--v-theme-primary), 0.1);
+  border-radius: 20px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.quick-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  background: rgba(var(--v-theme-surface-variant), 0.3);
 }
 
 @media (max-width: 600px) {
-  .shortcut-item {
+  :deep(.v-stepper-header) {
+    padding: 0.5rem 1rem;
+  }
+  
+  :deep(.v-stepper-item) {
+    padding: 0.25rem 0.5rem;
+  }
+  
+  :deep(.v-stepper-item__title) {
+    font-size: 0.8rem;
+  }
+  
+  :deep(.v-stepper-item__subtitle) {
+    font-size: 0.7rem;
+  }
+  
+  .step-indicator {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+    min-width: 60px;
+  }
+  
+  .quick-actions {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.5rem;
-  }
-  
-  .shortcut-keys {
-    min-width: unset;
-  }
-  
-  .help-section h3 {
-    font-size: 1rem;
+    padding: 0.75rem;
   }
 }
 </style>
