@@ -55,12 +55,6 @@
         
         <v-spacer />
         
-        <div class="step-indicator">
-          {{ currentStep }} di {{ totalSteps }}
-        </div>
-        
-        <v-spacer />
-        
         <v-btn
           v-if="currentStep < totalSteps"
           color="primary"
@@ -210,16 +204,6 @@ watch(isVisible, (newValue) => {
   padding: 0;
 }
 
-.step-indicator {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: rgb(var(--v-theme-primary));
-  padding: 0.5rem 1rem;
-  background: rgba(var(--v-theme-primary), 0.1);
-  border-radius: 20px;
-  min-width: 80px;
-  text-align: center;
-}
 
 
 @media (max-width: 600px) {
@@ -237,12 +221,6 @@ watch(isVisible, (newValue) => {
   
   :deep(.v-stepper-item__subtitle) {
     font-size: 0.7rem;
-  }
-  
-  .step-indicator {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.75rem;
-    min-width: 60px;
   }
 }
 </style>
