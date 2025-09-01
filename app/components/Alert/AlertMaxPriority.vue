@@ -1,8 +1,8 @@
 <template>
   <v-alert
     v-if="visible"
-    type="warning"
-    color="warning"
+    type="error"
+    color="error"
     closable
     @click:close="handleClose"
     class="alert-max-priority"
