@@ -427,9 +427,10 @@ const close = () => {
 
 .time-controls {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
-  max-width: 280px;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 320px;
 }
 
 .time-control-group {
