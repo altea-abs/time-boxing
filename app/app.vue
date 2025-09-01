@@ -36,14 +36,14 @@
             size="default"
             href="https://github.com/altea-abs/time-boxing"
             target="_blank"
-            title="GitHub Repository"
+            title="GitHub Repository (Alt+G)"
           />
           <v-btn
             icon="mdi-help-circle-outline"
             variant="text"
             size="default"
             @click="showHelp = !showHelp"
-            title="Aiuto"
+            title="Aiuto (Alt+H)"
           />
         </div>
       </template>
@@ -82,6 +82,11 @@ onMounted(() => {
     if (event.altKey && event.key.toLowerCase() === 's') {
       event.preventDefault()
       showSettings.value = !showSettings.value
+    }
+    // Alt+H to open help
+    if (event.altKey && event.key.toLowerCase() === 'h') {
+      event.preventDefault()
+      showHelp.value = !showHelp.value
     }
   }
   
