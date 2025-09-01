@@ -428,7 +428,8 @@ const close = () => {
 .time-controls {
   display: flex;
   gap: 1rem;
-  justify-content: flex-start;
+  justify-content: center;
+  max-width: 280px;
 }
 
 .time-control-group {
