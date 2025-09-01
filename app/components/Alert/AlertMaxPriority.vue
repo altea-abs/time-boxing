@@ -65,6 +65,8 @@ onUnmounted(() => {
   border-radius: 8px;
   min-height: auto;
   height: auto;
+  width: 100%;
+  max-width: none;
 }
 
 .alert-max-priority :deep(.v-alert__content) {
