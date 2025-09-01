@@ -128,8 +128,8 @@
           </span>
         </div>
 
-        <!-- Notes -->
-        <div v-if="slot.notes" class="time-slot__notes">
+        <!-- Notes (skip blocked slots to avoid duplication) -->
+        <div v-if="slot.notes && !slot.notes.startsWith('🔒')" class="time-slot__notes">
           <v-icon icon="mdi-note-text" size="small" class="mr-1" />
           {{ slot.notes }}
         </div>
