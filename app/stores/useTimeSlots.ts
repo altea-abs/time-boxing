@@ -135,7 +135,8 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
         // Fix the logic error and ensure we don't go past the end hour
         if (actualEndHour <= configEndHour) {
           // Check if this time slot is blocked by any recurring blocked slot
-          const isBlocked = settingsStore.isTimeSlotBlocked(dayOfWeek, startTime, endTime)
+          const blockingActivity = settingsStore.getBlockingActivity(dayOfWeek, startTime, endTime)
+          const isBlocked = blockingActivity !== null
           
           newSlots.push({
             id: `${dateString}-${startTime}`,
@@ -143,7 +144,7 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
             endTime,
             task: null,
             isAvailable: !isBlocked, // Make slot unavailable if it's blocked
-            notes: isBlocked ? 'Slot bloccato' : undefined
+            notes: blockingActivity ? `🔒 ${blockingActivity.title}` : undefined
           })
         }
       }
@@ -306,12 +307,13 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     timeSlots.value = timeSlots.value.map(slot => {
       // Only update slots for current date
       if (slot.id.startsWith(date.toISOString().split('T')[0])) {
-        const isBlocked = settingsStore.isTimeSlotBlocked(dayOfWeek, slot.startTime, slot.endTime)
+        const blockingActivity = settingsStore.getBlockingActivity(dayOfWeek, slot.startTime, slot.endTime)
+        const isBlocked = blockingActivity !== null
         
         return {
           ...slot,
           isAvailable: !isBlocked && !slot.task, // Don't make unavailable if it has a task
-          notes: isBlocked ? 'Slot bloccato' : slot.notes
+          notes: blockingActivity ? `🔒 ${blockingActivity.title}` : (slot.notes?.startsWith('🔒') ? undefined : slot.notes)
         }
       }
       

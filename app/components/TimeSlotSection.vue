@@ -71,7 +71,7 @@
           'time-slot--occupied': slot.task,
           'time-slot--available': slot.isAvailable && !slot.task,
           'time-slot--unavailable': !slot.isAvailable,
-          'time-slot--blocked': !slot.isAvailable && slot.notes === 'Slot bloccato',
+          'time-slot--blocked': !slot.isAvailable && slot.notes?.startsWith('🔒'),
           'time-slot--priority': slot.task?.isPriority,
           'time-slot--drag-over': dragOverSlotId === slot.id,
           'time-slot--adjacent-available': availableAdjacentSlots.includes(slot.id) && draggedTaskId,
@@ -115,15 +115,15 @@
         <!-- Empty slot placeholder -->
         <div v-else class="time-slot__placeholder">
           <v-icon 
-            :icon="slot.notes === 'Slot bloccato' ? 'mdi-calendar-clock' : 'mdi-plus'" 
+            :icon="slot.notes?.startsWith('🔒') ? 'mdi-calendar-clock' : 'mdi-plus'" 
             size="small" 
-            :color="slot.isAvailable ? 'grey' : (slot.notes === 'Slot bloccato' ? 'purple' : 'grey-lighten-2')" 
+            :color="slot.isAvailable ? 'grey' : (slot.notes?.startsWith('🔒') ? 'purple' : 'grey-lighten-2')" 
           />
           <span class="placeholder-text">
             {{ 
               slot.isAvailable 
                 ? 'Trascina qui un task' 
-                : (slot.notes === 'Slot bloccato' ? 'Slot bloccato' : 'Non disponibile')
+                : (slot.notes?.startsWith('🔒') ? slot.notes.replace('🔒 ', '') : 'Non disponibile')
             }}
           </span>
         </div>
@@ -178,7 +178,7 @@ const { todaySlots, stats, currentDate } = storeToRefs(timeSlotsStore)
 
 // Computed for blocked slots count
 const blockedSlotsCount = computed(() => {
-  return todaySlots.value.filter(slot => !slot.isAvailable && slot.notes === 'Slot bloccato').length
+  return todaySlots.value.filter(slot => !slot.isAvailable && slot.notes?.startsWith('🔒')).length
 })
 
 // Drag & drop state

@@ -137,6 +137,21 @@ export const useSettingsStore = defineStore('settings', () => {
     })
   }
   
+  const getBlockingActivity = (dayOfWeek: number, startTime: string, endTime: string): BlockedSlot | null => {
+    const dayBlockedSlots = getBlockedSlotsForDay(dayOfWeek)
+    
+    return dayBlockedSlots.find(blockedSlot => {
+      // Check if there's any overlap between the time slot and blocked slot
+      const slotStart = timeStringToMinutes(startTime)
+      const slotEnd = timeStringToMinutes(endTime)
+      const blockedStart = timeStringToMinutes(blockedSlot.startTime)
+      const blockedEnd = timeStringToMinutes(blockedSlot.endTime)
+      
+      // Check for any overlap
+      return slotStart < blockedEnd && slotEnd > blockedStart
+    }) || null
+  }
+  
   // Helper function to convert time string (HH:MM) to minutes since midnight
   const timeStringToMinutes = (timeString: string): number => {
     const [hours, minutes] = timeString.split(':').map(Number)
@@ -233,7 +248,8 @@ export const useSettingsStore = defineStore('settings', () => {
     removeBlockedSlot,
     toggleBlockedSlot,
     getBlockedSlotsForDay,
-    isTimeSlotBlocked
+    isTimeSlotBlocked,
+    getBlockingActivity
   }
 })
 
