@@ -109,36 +109,12 @@
               Orari di Lavoro
             </h3>
             
-            <div class="setting-item setting-item--stacked">
-              <div class="setting-label">
-                <div class="setting-name">Orario di inizio e fine</div>
-                <div class="setting-description">Quando inizia e finisce la tua giornata lavorativa</div>
-              </div>
-              <div class="time-controls">
-                <div class="time-control-group">
-                  <label class="time-label">Inizio</label>
-                  <v-select
-                    v-model="localStartHour"
-                    :items="hourOptions"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                    class="hour-select"
-                  />
-                </div>
-                <div class="time-control-group">
-                  <label class="time-label">Fine</label>
-                  <v-select
-                    v-model="localEndHour"
-                    :items="hourOptions.filter(h => h.value > localStartHour)"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                    class="hour-select"
-                  />
-                </div>
-              </div>
-            </div>
+            <SettingsTimeRange
+              :start-hour="localStartHour"
+              :end-hour="localEndHour"
+              @update:start-hour="localStartHour = $event"
+              @update:end-hour="localEndHour = $event"
+            />
 
             <div class="setting-item">
               <div class="setting-label">
@@ -415,36 +391,6 @@ const close = () => {
   min-width: 200px;
 }
 
-.setting-item--stacked {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 1rem;
-}
-
-.setting-item--stacked .setting-label {
-  flex: none;
-}
-
-.time-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  max-width: 320px;
-}
-
-.time-control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 120px;
-}
-
-.time-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: rgb(var(--v-theme-on-surface-variant));
-}
 
 .priority-slider {
   margin-bottom: 1rem;
@@ -535,13 +481,5 @@ const close = () => {
     justify-content: center;
   }
   
-  .time-controls {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .time-control-group {
-    min-width: unset;
-  }
 }
 </style>
