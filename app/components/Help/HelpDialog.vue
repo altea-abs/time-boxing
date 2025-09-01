@@ -211,7 +211,7 @@ watch(isVisible, (newValue) => {
 :deep(.v-stepper-window) {
   margin: 0;
   padding: 0;
-  min-height: 400px;
+  height: 400px;
   overflow-y: auto;
 }
 
@@ -240,6 +240,10 @@ watch(isVisible, (newValue) => {
   
   :deep(.v-stepper-item__subtitle) {
     font-size: 0.7rem;
+  }
+  
+  :deep(.v-stepper-window) {
+    height: 300px;
   }
 }
 </style>
