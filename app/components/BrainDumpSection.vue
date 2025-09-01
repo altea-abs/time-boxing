@@ -51,6 +51,15 @@
 
     <!-- Sezione note -->
     <NotesSection />
+    
+    <!-- Dialog di conferma cancellazione -->
+    <ConfirmDeleteTask
+      :visible="showDeleteConfirm"
+      :task="taskToDelete"
+      :assignments="taskAssignments"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+    />
   </div>
 </template>
 
@@ -59,13 +68,23 @@ import type { Task, BrainDumpEmits } from '~/types'
 
 const emit = defineEmits<BrainDumpEmits>()
 
-// Use both stores
+// Use all stores
 const tasksStore = useTasksStore()
 const prioritiesStore = usePrioritiesStore()
+const timeSlotsStore = useTimeSlotsStore()
 
 // Extract reactive references from stores
 const { tasks } = storeToRefs(tasksStore)
 const { showMaxAlert } = storeToRefs(prioritiesStore)
+
+// Delete confirmation state
+const showDeleteConfirm = ref(false)
+const taskToDelete = ref<Task | null>(null)
+const taskAssignments = ref<Array<{
+  slotId: string
+  startTime: string
+  endTime: string
+}>>([]);
 
 const handleTaskAdded = (taskText: string) => {
   const newTask = tasksStore.addTask(taskText)
@@ -80,13 +99,47 @@ const handlePriorityRemoved = (task: Task) => {
 }
 
 const removeTask = (taskId: string) => {
-  // Prima rimuovi dalle priorità se presente
   const task = tasks.value.find(t => t.id === taskId)
-  if (task) {
-    prioritiesStore.remove(task)
+  if (!task) return
+  
+  // Check se il task è assegnato a time slots
+  const assignments = timeSlotsStore.uniqueAssignedTasks
+    .find(assigned => assigned.task.id === taskId)
+    ?.slots || []
+  
+  if (assignments.length > 0) {
+    // Task assegnato - richiede conferma
+    taskToDelete.value = task
+    taskAssignments.value = assignments
+    showDeleteConfirm.value = true
+  } else {
+    // Task non assegnato - cancella direttamente
+    performTaskDeletion(task)
   }
-  // Poi rimuovi dal task store
-  tasksStore.removeTask(taskId)
+}
+
+const confirmDelete = () => {
+  if (taskToDelete.value) {
+    performTaskDeletion(taskToDelete.value)
+  }
+  cancelDelete()
+}
+
+const cancelDelete = () => {
+  showDeleteConfirm.value = false
+  taskToDelete.value = null
+  taskAssignments.value = []
+}
+
+const performTaskDeletion = (task: Task) => {
+  // Rimuovi dalle priorità se presente
+  prioritiesStore.remove(task)
+  
+  // Rimuovi da tutti i time slots
+  timeSlotsStore.removeTaskFromAllSlots(task.id)
+  
+  // Rimuovi dal task store
+  tasksStore.removeTask(task.id)
 }
 
 const togglePriority = (task: Task) => {
