@@ -2,6 +2,18 @@
 
 Un'applicazione web moderna per la gestione delle attività quotidiane e la pianificazione temporale, costruita con **Nuxt 4**, **Vue 3**, **TypeScript** e **Vuetify 3**.
 
+<div align="center">
+
+## 🚀 Demo Live
+
+### 🌐 **[► Prova l'applicazione qui ◄](https://altea-abs.github.io/time-boxing/)**
+
+*Testa subito tutte le funzionalità direttamente nel browser - nessuna installazione richiesta!*
+
+---
+
+</div>
+
 ![Nuxt 4](https://img.shields.io/badge/Nuxt-4.0.3-00C58E?style=for-the-badge&logo=nuxt.js&logoColor=white)
 ![Vue 3](https://img.shields.io/badge/Vue-3.x-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
@@ -34,9 +46,6 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 - **Design responsivo** ottimizzato per mobile e desktop
 - **Animazioni fluide** per feedback visivo immediato
 
-## 🚀 Demo Live
-
-🌐 **[Prova l'applicazione qui](https://altea-abs.github.io/time-boxing/)**
 
 ## 🛠 Tecnologie Utilizzate
 
