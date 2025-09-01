@@ -58,6 +58,24 @@
           <div class="shortcuts-list">
             <div class="shortcut-item">
               <div class="shortcut-keys">
+                <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Z</kbd>
+              </div>
+              <span>Annulla ultima operazione (Undo)</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-keys">
+                <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Y</kbd>
+              </div>
+              <span>Ripristina operazione annullata (Redo)</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-keys">
+                <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd>
+              </div>
+              <span>Ripristina alternativa (Redo)</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-keys">
                 <kbd>Ctrl</kbd> + <kbd>Drag</kbd>
               </div>
               <span>Assegna task a più slot consecutivi</span>
