@@ -1,5 +1,6 @@
 {
   "name": "nuxt-app",
+  "version": "1.0.0",
   "type": "module",
   "private": true,
   "scripts": {
@@ -10,7 +11,12 @@
     "postinstall": "nuxt prepare",
     "prepare": "husky",
     "commit": "cz",
-    "commit:retry": "cz --retry"
+    "commit:retry": "cz --retry",
+    "release": "standard-version",
+    "release:major": "standard-version --release-as major",
+    "release:minor": "standard-version --release-as minor",
+    "release:patch": "standard-version --release-as patch",
+    "release:first": "standard-version --first-release"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -31,7 +37,8 @@
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "husky": "^9.1.7",
-    "sass": "^1.91.0"
+    "sass": "^1.91.0",
+    "standard-version": "^9.5.0"
   },
   "config": {
     "commitizen": {
