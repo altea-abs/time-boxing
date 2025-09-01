@@ -24,6 +24,9 @@ export default defineNuxtPlugin((nuxtApp) => {
         mdi,
       },
     },
+    display: {
+      mobileBreakpoint: 'sm',
+    },
     theme: {
       defaultTheme: getSystemTheme(),
       themes: {
