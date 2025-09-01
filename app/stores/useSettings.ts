@@ -15,11 +15,11 @@ export const useSettingsStore = defineStore('settings', () => {
   })
   
   const startHour = computed(() => {
-    return dynamicStartHour.value ?? 9
+    return dynamicStartHour.value ?? config.public.defaultStartHour
   })
   
   const endHour = computed(() => {
-    return dynamicEndHour.value ?? 18
+    return dynamicEndHour.value ?? config.public.defaultEndHour
   })
   
   const slotDuration = computed(() => {
