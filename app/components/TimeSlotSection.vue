@@ -170,6 +170,28 @@
     <!-- Actions footer -->
     <div class="actions-footer">
       <v-btn
+        @click="undoAction"
+        color="secondary"
+        variant="outlined"
+        prepend-icon="mdi-undo"
+        size="small"
+        class="mr-2"
+        :disabled="!timeSlotsStore.canUndo"
+      >
+        Annulla
+      </v-btn>
+      <v-btn
+        @click="redoAction"
+        color="secondary"
+        variant="outlined"
+        prepend-icon="mdi-redo"
+        size="small"
+        class="mr-4"
+        :disabled="!timeSlotsStore.canRedo"
+      >
+        Ripristina
+      </v-btn>
+      <v-btn
         @click="generateSlots"
         color="primary"
         variant="outlined"
@@ -391,6 +413,14 @@ const generateSlots = () => {
 
 const clearAllSlots = () => {
   timeSlotsStore.clearAllSlots()
+}
+
+// Undo/Redo handlers
+const undoAction = () => {
+  timeSlotsStore.undo()
+}
+const redoAction = () => {
+  timeSlotsStore.redo()
 }
 
 // Navigation functions
