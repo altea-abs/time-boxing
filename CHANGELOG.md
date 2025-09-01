@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/altea-abs/time-boxing/compare/v1.0.0...v1.1.0) (2025-09-01)
+
+
+### ♻️ Chores
+
+* **tooling:** add standard-version configuration for automated releases ([9be1bc0](https://github.com/altea-abs/time-boxing/commit/9be1bc0dfc0aa7c6410b6417f65c85ebf21d0b91))
+
+
+### 🐛 Bug Fixes
+
+* **ui:** improve TimeSlot section title layout ([e658fbe](https://github.com/altea-abs/time-boxing/commit/e658fbe8d1c4016ae63dd44cb8c0a9f1db2c8cb2))
+
+
+### 💎 Styles
+
+* **ui:** align TimeSlot title section to left ([8d9e369](https://github.com/altea-abs/time-boxing/commit/8d9e3694e9f04ee8249cbd0cb7577f8b8dc52a74))
+
+
+### ✨ Features
+
+* **tooling:** add Documentation Updater Claude agent ([9bf519d](https://github.com/altea-abs/time-boxing/commit/9bf519d5f99e9c1ce04823fb627478d2cf946180))
+* **ui:** add version display in application header ([f29d1a9](https://github.com/altea-abs/time-boxing/commit/f29d1a93314b7e8a80e5a88e8687da6ffe5a1ca2))
+* **ui:** replace Today button with Alt+T keyboard shortcut ([8583e90](https://github.com/altea-abs/time-boxing/commit/8583e905ee06431b669aa8cfa3e973f0798b091c))
+* **ui:** reposition date navigation buttons around date display ([cd72624](https://github.com/altea-abs/time-boxing/commit/cd72624f03f959def57e72df9aea5a22083e468e))
+
+
+### 📚 Documentation
+
+* update keyboard shortcuts documentation for Alt+T ([6d070c9](https://github.com/altea-abs/time-boxing/commit/6d070c97a6e315ecd261aca38c3b5a352c2d6226))
+
 ## [1.0.0](https://github.com/altea-abs/time-boxing/compare/v0.0.0...v1.0.0) (2025-09-01)
 
 ## 0.0.0 (2025-09-01)
