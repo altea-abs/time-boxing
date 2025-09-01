@@ -117,6 +117,10 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
       return
     }
     
+    // Get settings store to check for blocked slots
+    const settingsStore = useSettingsStore()
+    const dayOfWeek = date.getDay() // 0 = Sunday, 1 = Monday, etc.
+    
     const newSlots: TimeSlot[] = []
     const { startHour: configStartHour, endHour: configEndHour, slotDuration: configSlotDuration } = gridConfig.value
     
@@ -130,12 +134,16 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
         
         // Fix the logic error and ensure we don't go past the end hour
         if (actualEndHour <= configEndHour) {
+          // Check if this time slot is blocked by any recurring blocked slot
+          const isBlocked = settingsStore.isTimeSlotBlocked(dayOfWeek, startTime, endTime)
+          
           newSlots.push({
             id: `${dateString}-${startTime}`,
             startTime,
             endTime,
             task: null,
-            isAvailable: true
+            isAvailable: !isBlocked, // Make slot unavailable if it's blocked
+            notes: isBlocked ? 'Slot bloccato' : undefined
           })
         }
       }
@@ -288,6 +296,30 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     // Generate new slots with updated configuration
     generateSlotsForDate(currentDate.value)
   }
+  
+  const updateSlotsWithBlockedStatus = (): void => {
+    // Update existing slots based on current blocked slots configuration
+    const settingsStore = useSettingsStore()
+    const date = currentDate.value
+    const dayOfWeek = date.getDay()
+    
+    timeSlots.value = timeSlots.value.map(slot => {
+      // Only update slots for current date
+      if (slot.id.startsWith(date.toISOString().split('T')[0])) {
+        const isBlocked = settingsStore.isTimeSlotBlocked(dayOfWeek, slot.startTime, slot.endTime)
+        
+        return {
+          ...slot,
+          isAvailable: !isBlocked && !slot.task, // Don't make unavailable if it has a task
+          notes: isBlocked ? 'Slot bloccato' : slot.notes
+        }
+      }
+      
+      return slot
+    })
+    
+    saveTimeSlots()
+  }
 
   const getAdjacentSlots = (slotId: string): { before: TimeSlot | null, after: TimeSlot | null } => {
     const currentSlotIndex = todaySlots.value.findIndex(slot => slot.id === slotId)
@@ -413,6 +445,7 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     clearAllSlots,
     setCurrentDate,
     regenerateCurrentSlots,
+    updateSlotsWithBlockedStatus,
     getAdjacentSlots,
     getAvailableAdjacentSlots,
     saveTimeSlots,

@@ -1,3 +1,5 @@
+import type { BlockedSlot, CreateBlockedSlotInput, UpdateBlockedSlotInput } from '~/types'
+
 export const useSettingsStore = defineStore('settings', () => {
   // Get initial runtime config
   const config = useRuntimeConfig()
@@ -7,6 +9,9 @@ export const useSettingsStore = defineStore('settings', () => {
   const dynamicStartHour = ref<number | null>(null)
   const dynamicEndHour = ref<number | null>(null)
   const dynamicSlotDuration = ref<number | null>(null)
+  
+  // State for blocked slots
+  const blockedSlots = ref<BlockedSlot[]>([])
   
   // Computed values that use dynamic values when available, fallback to config
   const maxPriorities = computed(() => {
@@ -57,8 +62,85 @@ export const useSettingsStore = defineStore('settings', () => {
     dynamicStartHour.value = null
     dynamicEndHour.value = null
     dynamicSlotDuration.value = null
+    blockedSlots.value = []
     saveSettings()
     console.log('⚙️ Settings reset to defaults')
+  }
+  
+  // Blocked slots management
+  const addBlockedSlot = (input: CreateBlockedSlotInput): BlockedSlot => {
+    const newSlot: BlockedSlot = {
+      id: `blocked-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...input,
+      enabled: true,
+      createdAt: new Date()
+    }
+    
+    blockedSlots.value.push(newSlot)
+    saveSettings()
+    console.log('⚙️ Blocked slot added:', newSlot.title)
+    return newSlot
+  }
+  
+  const updateBlockedSlot = (id: string, updates: UpdateBlockedSlotInput): boolean => {
+    const index = blockedSlots.value.findIndex(slot => slot.id === id)
+    if (index === -1) return false
+    
+    blockedSlots.value[index] = {
+      ...blockedSlots.value[index],
+      ...updates
+    }
+    
+    saveSettings()
+    console.log('⚙️ Blocked slot updated:', id)
+    return true
+  }
+  
+  const removeBlockedSlot = (id: string): boolean => {
+    const index = blockedSlots.value.findIndex(slot => slot.id === id)
+    if (index === -1) return false
+    
+    blockedSlots.value.splice(index, 1)
+    saveSettings()
+    console.log('⚙️ Blocked slot removed:', id)
+    return true
+  }
+  
+  const toggleBlockedSlot = (id: string): boolean => {
+    const slot = blockedSlots.value.find(slot => slot.id === id)
+    if (!slot) return false
+    
+    slot.enabled = !slot.enabled
+    saveSettings()
+    console.log('⚙️ Blocked slot toggled:', id, slot.enabled)
+    return true
+  }
+  
+  const getBlockedSlotsForDay = (dayOfWeek: number): BlockedSlot[] => {
+    return blockedSlots.value.filter(slot => 
+      slot.enabled && slot.daysOfWeek.includes(dayOfWeek)
+    )
+  }
+  
+  const isTimeSlotBlocked = (dayOfWeek: number, startTime: string, endTime: string): boolean => {
+    const dayBlockedSlots = getBlockedSlotsForDay(dayOfWeek)
+    
+    return dayBlockedSlots.some(blockedSlot => {
+      // Check if there's any overlap between the time slot and blocked slot
+      const slotStart = timeStringToMinutes(startTime)
+      const slotEnd = timeStringToMinutes(endTime)
+      const blockedStart = timeStringToMinutes(blockedSlot.startTime)
+      const blockedEnd = timeStringToMinutes(blockedSlot.endTime)
+      
+      // Check for any overlap
+      return slotStart < blockedEnd && slotEnd > blockedStart
+    })
+  }
+  
+  // Helper function to convert time string (HH:MM) to minutes since midnight
+  const timeStringToMinutes = (timeString: string): number => {
+    const [hours, minutes] = timeString.split(':').map(Number)
+    return hours * 60 + minutes
   }
   
   // Persistence
@@ -70,6 +152,10 @@ export const useSettingsStore = defineStore('settings', () => {
           startHour: dynamicStartHour.value,
           endHour: dynamicEndHour.value,
           slotDuration: dynamicSlotDuration.value,
+          blockedSlots: blockedSlots.value.map(slot => ({
+            ...slot,
+            createdAt: slot.createdAt.toISOString()
+          })),
           lastUpdated: new Date().toISOString()
         }
         localStorage.setItem('braindump-settings', JSON.stringify(settingsData))
@@ -99,6 +185,12 @@ export const useSettingsStore = defineStore('settings', () => {
           if (parsedSettings.slotDuration !== undefined) {
             dynamicSlotDuration.value = parsedSettings.slotDuration
           }
+          if (parsedSettings.blockedSlots && Array.isArray(parsedSettings.blockedSlots)) {
+            blockedSlots.value = parsedSettings.blockedSlots.map((slot: any) => ({
+              ...slot,
+              createdAt: new Date(slot.createdAt)
+            }))
+          }
           
           console.log('📂 Settings loaded from localStorage:', parsedSettings)
         }
@@ -120,6 +212,7 @@ export const useSettingsStore = defineStore('settings', () => {
     startHour: readonly(startHour),
     endHour: readonly(endHour),
     slotDuration: readonly(slotDuration),
+    blockedSlots: readonly(blockedSlots),
     
     // Raw dynamic values (for settings dialog)
     dynamicMaxPriorities: readonly(dynamicMaxPriorities),
@@ -132,7 +225,15 @@ export const useSettingsStore = defineStore('settings', () => {
     updateTimeGrid,
     resetToDefaults,
     loadSettings,
-    saveSettings
+    saveSettings,
+    
+    // Blocked slots actions
+    addBlockedSlot,
+    updateBlockedSlot,
+    removeBlockedSlot,
+    toggleBlockedSlot,
+    getBlockedSlotsForDay,
+    isTimeSlotBlocked
   }
 })
 

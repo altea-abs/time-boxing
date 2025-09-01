@@ -41,5 +41,8 @@ export type {
   TimeSlotDropEvent,
   TimeboxingStats,
   CalendarConfig,
-  CalendarEvent
+  CalendarEvent,
+  BlockedSlot,
+  CreateBlockedSlotInput,
+  UpdateBlockedSlotInput
 } from './timeslots'

@@ -39,6 +39,10 @@
           <v-icon icon="mdi-clock" class="mr-1" size="small" />
           {{ stats.totalScheduledTime }}min totali
         </v-chip>
+        <v-chip color="purple" variant="outlined" size="small" class="mr-2">
+          <v-icon icon="mdi-calendar-clock" class="mr-1" size="small" />
+          {{ blockedSlotsCount }} bloccati
+        </v-chip>
         
         <!-- Multi-assign toggle button -->
         <button 
@@ -67,6 +71,7 @@
           'time-slot--occupied': slot.task,
           'time-slot--available': slot.isAvailable && !slot.task,
           'time-slot--unavailable': !slot.isAvailable,
+          'time-slot--blocked': !slot.isAvailable && slot.notes === 'Slot bloccato',
           'time-slot--priority': slot.task?.isPriority,
           'time-slot--drag-over': dragOverSlotId === slot.id,
           'time-slot--adjacent-available': availableAdjacentSlots.includes(slot.id) && draggedTaskId,
@@ -110,12 +115,16 @@
         <!-- Empty slot placeholder -->
         <div v-else class="time-slot__placeholder">
           <v-icon 
-            icon="mdi-plus" 
+            :icon="slot.notes === 'Slot bloccato' ? 'mdi-calendar-clock' : 'mdi-plus'" 
             size="small" 
-            :color="slot.isAvailable ? 'grey' : 'grey-lighten-2'" 
+            :color="slot.isAvailable ? 'grey' : (slot.notes === 'Slot bloccato' ? 'purple' : 'grey-lighten-2')" 
           />
           <span class="placeholder-text">
-            {{ slot.isAvailable ? 'Trascina qui un task' : 'Non disponibile' }}
+            {{ 
+              slot.isAvailable 
+                ? 'Trascina qui un task' 
+                : (slot.notes === 'Slot bloccato' ? 'Slot bloccato' : 'Non disponibile')
+            }}
           </span>
         </div>
 
@@ -166,6 +175,11 @@ import type { TimeSlot, Task } from '~/types'
 
 const timeSlotsStore = useTimeSlotsStore()
 const { todaySlots, stats, currentDate } = storeToRefs(timeSlotsStore)
+
+// Computed for blocked slots count
+const blockedSlotsCount = computed(() => {
+  return todaySlots.value.filter(slot => !slot.isAvailable && slot.notes === 'Slot bloccato').length
+})
 
 // Drag & drop state
 const isDragOver = ref(false)
@@ -470,6 +484,30 @@ onUnmounted(() => {
   background: rgba(var(--v-theme-error), 0.05);
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.time-slot--blocked {
+  border-color: rgba(var(--v-theme-purple), 0.4) !important;
+  background: rgba(var(--v-theme-purple), 0.08) !important;
+  opacity: 0.8;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.time-slot--blocked::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background: rgba(var(--v-theme-purple), 0.8);
+  border-radius: 50%;
+}
+
+.time-slot--blocked .placeholder-text {
+  color: rgba(var(--v-theme-purple), 1) !important;
+  font-weight: 500;
 }
 
 .time-slot--priority {

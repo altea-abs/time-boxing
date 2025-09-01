@@ -55,6 +55,16 @@
             </div>
           </div>
 
+          <!-- Blocked Slots Section (Full Width) -->
+          <div class="settings-section">
+            <h3 class="settings-section-title">
+              <v-icon icon="mdi-calendar-clock" class="mr-2" color="purple" />
+              Slot Bloccati
+            </h3>
+            
+            <SettingsBlockedSlots />
+          </div>
+
           <!-- Preview Section (Full Width) -->
           <div class="settings-section">
             <h3 class="settings-section-title">
@@ -76,6 +86,10 @@
                   <div class="preview-stat">
                     <v-icon icon="mdi-timelapse" color="success" class="mr-1" />
                     <strong>{{ totalHoursPreview }}</strong> ore lavorative
+                  </div>
+                  <div class="preview-stat">
+                    <v-icon icon="mdi-calendar-clock" color="purple" class="mr-1" />
+                    <strong>{{ blockedSlotsCount }}</strong> slot bloccati attivi
                   </div>
                 </div>
                 
@@ -139,6 +153,8 @@ const emit = defineEmits<SettingsDialogEmits>()
 
 // Stores
 const timeSlotsStore = useTimeSlotsStore()
+const settingsStore = useSettingsStore()
+const { blockedSlots } = storeToRefs(settingsStore)
 
 // Reactive visibility
 const isVisible = computed({
@@ -161,6 +177,10 @@ const totalSlotsPreview = computed(() => {
 
 const totalHoursPreview = computed(() => {
   return localEndHour.value - localStartHour.value
+})
+
+const blockedSlotsCount = computed(() => {
+  return blockedSlots.value.filter(slot => slot.enabled).length
 })
 
 // Initialize with current values

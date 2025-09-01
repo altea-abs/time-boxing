@@ -80,3 +80,60 @@ export interface CalendarEvent {
   task?: Task
   color?: string
 }
+
+/**
+ * Slot bloccato ricorrente
+ */
+export interface BlockedSlot {
+  /** ID univoco dello slot bloccato */
+  id: string
+  
+  /** Titolo/nome dell'attività ricorrente */
+  title: string
+  
+  /** Ora di inizio (formato HH:MM) */
+  startTime: string
+  
+  /** Ora di fine (formato HH:MM) */
+  endTime: string
+  
+  /** Giorni della settimana (0=Domenica, 1=Lunedì, ..., 6=Sabato) */
+  daysOfWeek: number[]
+  
+  /** Colore di visualizzazione (hex) */
+  color?: string
+  
+  /** Descrizione opzionale */
+  description?: string
+  
+  /** Se attivo/disattivo */
+  enabled: boolean
+  
+  /** Data di creazione */
+  createdAt: Date
+}
+
+/**
+ * Input per creare uno slot bloccato
+ */
+export interface CreateBlockedSlotInput {
+  title: string
+  startTime: string
+  endTime: string
+  daysOfWeek: number[]
+  color?: string
+  description?: string
+}
+
+/**
+ * Input per aggiornare uno slot bloccato
+ */
+export interface UpdateBlockedSlotInput {
+  title?: string
+  startTime?: string
+  endTime?: string
+  daysOfWeek?: number[]
+  color?: string
+  description?: string
+  enabled?: boolean
+}

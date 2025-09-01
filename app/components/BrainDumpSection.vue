@@ -192,17 +192,14 @@ const handleTaskDragStart = (event: DragEvent, task: Task) => {
 
 <style scoped>
 .brain-dump-section {
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 .brain-dump-container {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 
 .section-title {
@@ -213,9 +210,7 @@ const handleTaskDragStart = (event: DragEvent, task: Task) => {
 }
 
 .task-list {
-  flex: 1;
   overflow-y: auto;
-  max-height: 400px;
 }
 
 .task-item {
