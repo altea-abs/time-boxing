@@ -48,21 +48,19 @@
 </template>
 
 <script setup lang="ts">
-// Notes reactive state
-const notes = ref('')
+// Use notes store
+const notesStore = useNotesStore()
 
-// Load notes from localStorage on mount
-onMounted(() => {
-  const savedNotes = localStorage.getItem('braindump-notes')
-  if (savedNotes) {
-    notes.value = savedNotes
+// Get current notes from store
+const { currentNotes } = storeToRefs(notesStore)
+
+// Computed property for v-model
+const notes = computed({
+  get: () => currentNotes.value.content,
+  set: (value: string) => {
+    notesStore.updateNotes(value)
   }
 })
-
-// Watch notes changes and save to localStorage
-watch(notes, (newNotes) => {
-  localStorage.setItem('braindump-notes', newNotes)
-}, { immediate: false })
 
 // Actions
 const copyNotes = async () => {
@@ -75,7 +73,7 @@ const copyNotes = async () => {
 }
 
 const clearNotes = () => {
-  notes.value = ''
+  notesStore.clearNotes()
 }
 </script>
 

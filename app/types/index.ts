@@ -46,3 +46,11 @@ export type {
   CreateBlockedSlotInput,
   UpdateBlockedSlotInput
 } from './timeslots'
+
+// Export delle interfacce notes
+export type {
+  DailyNotes,
+  CreateNotesInput,
+  UpdateNotesInput,
+  NotesStats
+} from './notes'
