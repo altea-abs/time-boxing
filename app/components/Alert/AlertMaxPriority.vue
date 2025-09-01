@@ -65,6 +65,7 @@ onUnmounted(() => {
   border-radius: 8px;
   min-height: auto;
   height: auto;
+  max-height: 200px;
   width: 100%;
   max-width: none;
 }
