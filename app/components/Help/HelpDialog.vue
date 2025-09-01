@@ -1,7 +1,7 @@
 <template>
-  <v-dialog v-model="isVisible" max-width="800" @keydown.esc="close">
-    <v-card class="help-dialog">
-      <v-card-title class="d-flex align-center px-6 py-4">
+  <v-dialog v-model="isVisible" max-width="800" max-height="90vh" @keydown.esc="close">
+    <v-card class="help-dialog d-flex flex-column" style="height: 90vh;">
+      <v-card-title class="d-flex align-center px-6 py-4 flex-shrink-0">
         <v-icon icon="mdi-help-circle" class="mr-2" color="primary" />
         Guida Interattiva
         <v-spacer />
@@ -13,7 +13,7 @@
         />
       </v-card-title>
       
-      <v-card-text class="pa-0">
+      <v-card-text class="pa-0 flex-grow-1 overflow-y-auto">
         <v-stepper 
           v-model="currentStep" 
           class="help-stepper"
@@ -43,7 +43,7 @@
         </v-stepper>
       </v-card-text>
       
-      <v-card-actions class="px-6 py-4">
+      <v-card-actions class="px-6 py-4 flex-shrink-0">
         <v-btn
           v-if="currentStep > 1"
           variant="outlined"
@@ -81,7 +81,7 @@
         </v-btn>
       </v-card-actions>
       
-      <div class="quick-actions">
+      <div class="quick-actions flex-shrink-0">
         <v-btn
           variant="text"
           size="small"
@@ -189,6 +189,7 @@ watch(isVisible, (newValue) => {
 <style scoped>
 .help-dialog {
   overflow: hidden;
+  max-height: 90vh;
 }
 
 .help-stepper {
@@ -224,7 +225,8 @@ watch(isVisible, (newValue) => {
 :deep(.v-stepper-window) {
   margin: 0;
   padding: 0;
-  min-height: 500px;
+  min-height: 400px;
+  overflow-y: auto;
 }
 
 :deep(.v-stepper-window-item) {
