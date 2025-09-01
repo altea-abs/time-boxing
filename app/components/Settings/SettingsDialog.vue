@@ -43,22 +43,10 @@
               @update:end-hour="localEndHour = $event"
             />
 
-            <div class="setting-item">
-              <div class="setting-label">
-                <div class="setting-name">Durata slot</div>
-                <div class="setting-description">Durata di ogni time slot in minuti</div>
-              </div>
-              <div class="setting-control">
-                <v-select
-                  v-model="localSlotDuration"
-                  :items="durationOptions"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  class="duration-select"
-                />
-              </div>
-            </div>
+            <SettingsSlotDuration
+              :slot-duration="localSlotDuration"
+              @update:slot-duration="localSlotDuration = $event"
+            />
           </div>
 
           <!-- Preview Section -->
@@ -167,12 +155,6 @@ const hourOptions = computed(() => {
   return options
 })
 
-const durationOptions = [
-  { title: '15 minuti', value: 15 },
-  { title: '30 minuti', value: 30 },
-  { title: '45 minuti', value: 45 },
-  { title: '60 minuti', value: 60 }
-]
 
 // Computed for preview
 const totalSlotsPreview = computed(() => {
