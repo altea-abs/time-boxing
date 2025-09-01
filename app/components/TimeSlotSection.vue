@@ -2,10 +2,39 @@
   <div class="time-slot-section">
     <!-- Header con statistiche -->
     <div class="section-header">
-      <h2 class="section-title">
-        <v-icon icon="mdi-clock-outline" class="mr-2" />
-        Time Slot ({{ formatDate(currentDate) }})
-      </h2>
+      <div class="title-with-navigation">
+        <h2 class="section-title">
+          <v-icon icon="mdi-clock-outline" class="mr-2" />
+          Time Slot ({{ formatDate(currentDate) }})
+        </h2>
+        
+        <!-- Date Navigation Controls -->
+        <div class="date-navigation">
+          <v-btn
+            icon="mdi-chevron-left"
+            variant="text"
+            size="small"
+            @click="goToPreviousDay"
+            title="Giorno precedente"
+          />
+          <v-btn
+            variant="outlined"
+            size="small"
+            @click="goToToday"
+            :disabled="isToday"
+            class="today-btn"
+          >
+            Oggi
+          </v-btn>
+          <v-btn
+            icon="mdi-chevron-right"
+            variant="text"
+            size="small"
+            @click="goToNextDay"
+            title="Giorno successivo"
+          />
+        </div>
+      </div>
       
       <!-- Multi-assign mode indicator -->
       <div v-if="isEffectiveMultiAssignMode" class="multi-assign-indicator">
@@ -174,11 +203,18 @@
 import type { TimeSlot, Task } from '~/types'
 
 const timeSlotsStore = useTimeSlotsStore()
-const { todaySlots, stats, currentDate } = storeToRefs(timeSlotsStore)
+const { todaySlots, stats, currentDate, availableDates } = storeToRefs(timeSlotsStore)
 
 // Computed for blocked slots count
 const blockedSlotsCount = computed(() => {
   return todaySlots.value.filter(slot => !slot.isAvailable && slot.notes?.startsWith('🔒')).length
+})
+
+// Computed to check if current date is today
+const isToday = computed(() => {
+  const today = new Date()
+  const current = currentDate.value
+  return today.toDateString() === current.toDateString()
 })
 
 // Drag & drop state
@@ -327,6 +363,19 @@ const clearAllSlots = () => {
   timeSlotsStore.clearAllSlots()
 }
 
+// Navigation functions
+const goToPreviousDay = () => {
+  timeSlotsStore.goToPreviousDay()
+}
+
+const goToNextDay = () => {
+  timeSlotsStore.goToNextDay()
+}
+
+const goToToday = () => {
+  timeSlotsStore.goToToday()
+}
+
 const toggleMultiAssignMode = () => {
   isMultiAssignMode.value = !isMultiAssignMode.value
   touchedSlots.value.clear()
@@ -430,13 +479,30 @@ onUnmounted(() => {
   margin-bottom: 1.5rem;
 }
 
+.title-with-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
 .section-title {
   font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0;
   color: rgb(var(--v-theme-on-surface));
   display: flex;
   align-items: center;
+}
+
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.today-btn {
+  min-width: 60px;
 }
 
 .stats-row {
@@ -820,6 +886,20 @@ onUnmounted(() => {
   }
   
   .actions-footer {
+    justify-content: center;
+  }
+  
+  .title-with-navigation {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .section-title {
+    font-size: 1.1rem;
+  }
+  
+  .date-navigation {
     justify-content: center;
   }
 }

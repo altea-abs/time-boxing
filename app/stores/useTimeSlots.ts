@@ -8,6 +8,9 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   const settingsStore = useSettingsStore()
   const { startHour, endHour, slotDuration } = storeToRefs(settingsStore)
   
+  // Available dates for navigation
+  const availableDates = ref<string[]>([])
+  
   // Default time grid configuration (using settings store values)
   const defaultGridConfig: TimeGridConfig = {
     startHour: 9, // 9:00
@@ -103,6 +106,9 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   const generateSlotsForDate = (date: Date): void => {
     const dateString = date.toISOString().split('T')[0]
     
+    // Run cleanup before generating new slots
+    cleanupOldSlots()
+    
     // Keep existing slots for other dates and for the current date if they exist
     const existingSlotsForOtherDates = timeSlots.value.filter(slot => 
       !slot.id.startsWith(dateString)
@@ -114,6 +120,7 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     
     // If we already have slots for this date, don't regenerate them
     if (existingSlotsForCurrentDate.length > 0) {
+      updateAvailableDates()
       return
     }
     
@@ -152,6 +159,7 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     
     timeSlots.value = [...existingSlotsForOtherDates, ...newSlots]
     saveTimeSlots()
+    updateAvailableDates()
   }
   
   const assignTaskToSlot = (task: Task, slotId: string): boolean => {
@@ -287,6 +295,76 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   const setCurrentDate = (date: Date): void => {
     currentDate.value = date
     generateSlotsForDate(date)
+    updateAvailableDates()
+  }
+  
+  // Navigation functions
+  const goToPreviousDay = (): void => {
+    const newDate = new Date(currentDate.value)
+    newDate.setDate(newDate.getDate() - 1)
+    setCurrentDate(newDate)
+  }
+  
+  const goToNextDay = (): void => {
+    const newDate = new Date(currentDate.value)
+    newDate.setDate(newDate.getDate() + 1)
+    setCurrentDate(newDate)
+  }
+  
+  const goToToday = (): void => {
+    setCurrentDate(new Date())
+  }
+  
+  // Update available dates for navigation
+  const updateAvailableDates = (): void => {
+    const dates = new Set<string>()
+    
+    // Add current date
+    dates.add(currentDate.value.toISOString().split('T')[0])
+    
+    // Add dates from existing slots
+    timeSlots.value.forEach(slot => {
+      const dateMatch = slot.id.match(/^(\d{4}-\d{2}-\d{2})/)
+      if (dateMatch) {
+        dates.add(dateMatch[1])
+      }
+    })
+    
+    availableDates.value = Array.from(dates).sort()
+  }
+  
+  // Cleanup old slots based on retention policy
+  const cleanupOldSlots = (): void => {
+    const maxDays = config.public.maxDaysRetention
+    const today = new Date()
+    const cutoffDate = new Date(today)
+    cutoffDate.setDate(today.getDate() - maxDays)
+    
+    const cutoffDateString = cutoffDate.toISOString().split('T')[0]
+    
+    // Count slots to be removed for logging
+    const slotsToRemove = timeSlots.value.filter(slot => {
+      const dateMatch = slot.id.match(/^(\d{4}-\d{2}-\d{2})/)
+      if (dateMatch) {
+        return dateMatch[1] < cutoffDateString
+      }
+      return false
+    })
+    
+    if (slotsToRemove.length > 0) {
+      // Remove old slots
+      timeSlots.value = timeSlots.value.filter(slot => {
+        const dateMatch = slot.id.match(/^(\d{4}-\d{2}-\d{2})/)
+        if (dateMatch) {
+          return dateMatch[1] >= cutoffDateString
+        }
+        return true
+      })
+      
+      console.log(`🧹 Cleaned up ${slotsToRemove.length} old slots older than ${maxDays} days`)
+      saveTimeSlots()
+      updateAvailableDates()
+    }
   }
   
   const regenerateCurrentSlots = (): void => {
@@ -404,6 +482,9 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
         
         if (!hasCurrentDateSlots) {
           generateSlotsForDate(currentDate.value)
+        } else {
+          // Update available dates from loaded data
+          updateAvailableDates()
         }
         
       } catch (error) {
@@ -425,6 +506,7 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     timeSlots: readonly(timeSlots),
     currentDate: readonly(currentDate),
     gridConfig: readonly(gridConfig),
+    availableDates: readonly(availableDates),
     
     // Getters
     todaySlots,
@@ -451,7 +533,14 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     getAdjacentSlots,
     getAvailableAdjacentSlots,
     saveTimeSlots,
-    loadTimeSlots
+    loadTimeSlots,
+    
+    // Navigation actions
+    goToPreviousDay,
+    goToNextDay,
+    goToToday,
+    cleanupOldSlots,
+    updateAvailableDates
   }
 })
 

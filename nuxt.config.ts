@@ -47,7 +47,8 @@ export default defineNuxtConfig({
       autoSaveEnabled: process.env.NUXT_AUTO_SAVE_ENABLED !== 'false',
       defaultStartHour: parseInt(process.env.NUXT_DEFAULT_START_HOUR || '9'),
       defaultEndHour: parseInt(process.env.NUXT_DEFAULT_END_HOUR || '18'),
-      defaultSlotDuration: parseInt(process.env.NUXT_DEFAULT_SLOT_DURATION || '30')
+      defaultSlotDuration: parseInt(process.env.NUXT_DEFAULT_SLOT_DURATION || '30'),
+      maxDaysRetention: parseInt(process.env.NUXT_MAX_DAYS_RETENTION || '7')
     }
   }
 })
