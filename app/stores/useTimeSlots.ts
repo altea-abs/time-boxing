@@ -30,6 +30,58 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   // State
   const timeSlots = ref<TimeSlot[]>([])
   const currentDate = ref(new Date())
+
+  // --- Undo/Redo History ---
+  type SlotChange = { slotId: string; beforeTask: Task | null; afterTask: Task | null }
+  type HistoryEntry = { label: string; changes: SlotChange[]; at: number }
+  const historyPast = ref<HistoryEntry[]>([])
+  const historyFuture = ref<HistoryEntry[]>([])
+  const historyLimit = 100
+
+  const canUndo = computed(() => historyPast.value.length > 0)
+  const canRedo = computed(() => historyFuture.value.length > 0)
+
+  const pushHistory = (entry: HistoryEntry) => {
+    if (entry.changes.length === 0) return
+    historyPast.value.push(entry)
+    if (historyPast.value.length > historyLimit) historyPast.value.shift()
+    // Any new action invalidates redo stack
+    historyFuture.value = []
+  }
+
+  const applySlotTask = (slotId: string, task: Task | null): boolean => {
+    const index = timeSlots.value.findIndex(s => s.id === slotId)
+    if (index === -1) return false
+    const slot = timeSlots.value[index]
+    timeSlots.value[index] = { ...slot, task }
+    return true
+  }
+
+  const applyChanges = (changes: SlotChange[], direction: 'undo' | 'redo') => {
+    const tasksToApply = direction === 'undo' ? 'beforeTask' : 'afterTask'
+    let any = false
+    changes.forEach(ch => {
+      const ok = applySlotTask(ch.slotId, ch[tasksToApply])
+      if (ok) any = true
+    })
+    if (any) saveTimeSlots()
+  }
+
+  const undo = (): boolean => {
+    if (!canUndo.value) return false
+    const entry = historyPast.value.pop()!
+    applyChanges(entry.changes, 'undo')
+    historyFuture.value.push(entry)
+    return true
+  }
+
+  const redo = (): boolean => {
+    if (!canRedo.value) return false
+    const entry = historyFuture.value.pop()!
+    applyChanges(entry.changes, 'redo')
+    historyPast.value.push(entry)
+    return true
+  }
   
   // Getters
   const todaySlots = computed(() => {
@@ -216,6 +268,13 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     
     // Save to localStorage once
     saveTimeSlots()
+
+    // Record history
+    pushHistory({
+      label: 'assign',
+      at: Date.now(),
+      changes: [{ slotId, beforeTask: null, afterTask: newTimeSlots[slotIndex].task! }]
+    })
     
     console.log('🎉 Assignment completed successfully')
     return true
@@ -224,6 +283,7 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   const removeTaskFromSlot = (slotId: string): boolean => {
     const slotIndex = timeSlots.value.findIndex(slot => slot.id === slotId)
     if (slotIndex === -1) return false
+    const before = timeSlots.value[slotIndex].task
     
     timeSlots.value[slotIndex] = {
       ...timeSlots.value[slotIndex],
@@ -231,19 +291,28 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     }
     
     saveTimeSlots()
+    if (before) {
+      pushHistory({
+        label: 'remove',
+        at: Date.now(),
+        changes: [{ slotId, beforeTask: before, afterTask: null }]
+      })
+    }
     return true
   }
   
   const removeTaskFromAllSlots = (taskId: string): void => {
+    const changes: SlotChange[] = []
     timeSlots.value.forEach((slot, index) => {
       if (slot.task?.id === taskId) {
-        timeSlots.value[index] = {
-          ...slot,
-          task: null
-        }
+        changes.push({ slotId: slot.id, beforeTask: slot.task, afterTask: null })
+        timeSlots.value[index] = { ...slot, task: null }
       }
     })
     saveTimeSlots()
+    if (changes.length) {
+      pushHistory({ label: 'remove_all', at: Date.now(), changes })
+    }
   }
   
   const moveTask = (event: TimeSlotDropEvent): boolean => {
@@ -293,11 +362,17 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   }
   
   const clearAllSlots = (): void => {
-    timeSlots.value = timeSlots.value.map(slot => ({
-      ...slot,
-      task: null
-    }))
+    const changes: SlotChange[] = []
+    timeSlots.value = timeSlots.value.map(slot => {
+      if (slot.task) {
+        changes.push({ slotId: slot.id, beforeTask: slot.task, afterTask: null })
+      }
+      return { ...slot, task: null }
+    })
     saveTimeSlots()
+    if (changes.length) {
+      pushHistory({ label: 'clear_all', at: Date.now(), changes })
+    }
   }
   
   const setCurrentDate = (date: Date): void => {
@@ -542,6 +617,11 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     getAvailableAdjacentSlots,
     saveTimeSlots,
     loadTimeSlots,
+    // History
+    undo,
+    redo,
+    canUndo,
+    canRedo,
     
     // Navigation actions
     goToPreviousDay,
