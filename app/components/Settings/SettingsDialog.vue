@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isVisible" max-width="500" persistent>
+  <v-dialog v-model="isVisible" max-width="800" @keydown.esc="close">
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon icon="mdi-cog" class="mr-2" color="primary" />
