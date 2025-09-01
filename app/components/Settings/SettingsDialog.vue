@@ -169,14 +169,16 @@ const totalHoursPreview = computed(() => {
 
 // Initialize with current values
 const initializeSettings = () => {
-  // Get current settings from settings store
-  const settingsStore = useSettingsStore()
-  const { maxPriorities, startHour, endHour, slotDuration } = storeToRefs(settingsStore)
-  
-  localMaxPriorities.value = maxPriorities.value
-  localStartHour.value = startHour.value
-  localEndHour.value = endHour.value
-  localSlotDuration.value = slotDuration.value
+  // Force reactivity by using nextTick to ensure store is fully initialized
+  nextTick(() => {
+    const store = useSettingsStore()
+    const { maxPriorities, startHour, endHour, slotDuration } = storeToRefs(store)
+    
+    localMaxPriorities.value = maxPriorities.value
+    localStartHour.value = startHour.value
+    localEndHour.value = endHour.value
+    localSlotDuration.value = slotDuration.value
+  })
 }
 
 // Watch dialog visibility to initialize
@@ -214,7 +216,7 @@ const saveSettings = () => {
   })
   
   // Regenerate time slots with new configuration
-  timeSlotsStore.generateSlotsForDate(new Date())
+  timeSlotsStore.regenerateCurrentSlots()
   
   close()
   

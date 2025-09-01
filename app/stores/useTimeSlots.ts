@@ -280,8 +280,12 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     generateSlotsForDate(date)
   }
   
-  const updateGridConfig = (newConfig: Partial<TimeGridConfig>): void => {
-    gridConfig.value = { ...gridConfig.value, ...newConfig }
+  const regenerateCurrentSlots = (): void => {
+    // Clear existing slots for current date to force regeneration
+    const dateString = currentDate.value.toISOString().split('T')[0]
+    timeSlots.value = timeSlots.value.filter(slot => !slot.id.startsWith(dateString))
+    
+    // Generate new slots with updated configuration
     generateSlotsForDate(currentDate.value)
   }
 
@@ -408,7 +412,7 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     updateSlotNotes,
     clearAllSlots,
     setCurrentDate,
-    updateGridConfig,
+    regenerateCurrentSlots,
     getAdjacentSlots,
     getAvailableAdjacentSlots,
     saveTimeSlots,
