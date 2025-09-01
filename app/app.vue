@@ -1,21 +1,65 @@
 <template>
-  <div class="app">
+  <v-app>
     <NuxtRouteAnnouncer />
-    <header class="app-header">
-      <h1>Brain Dump & Timeboxing Planner</h1>
-    </header>
-    <main class="app-main">
-      <div class="left-column">
-        <BrainDumpSection @priority-toggled="handlePriorityToggled" />
+    <v-app-bar
+      color="primary"
+      dark
+      prominent
+      elevation="4"
+      class="app-header"
+    >
+      <template #prepend>
+        <div class="header-icon">
+          <v-icon icon="mdi-brain" size="32" class="mr-3" />
+        </div>
+      </template>
+      
+      <div class="header-content">
+        <v-app-bar-title class="header-title">
+          <div class="title-main">Brain Dump & Timeboxing</div>
+          <div class="title-sub">Daily Planner</div>
+        </v-app-bar-title>
       </div>
-      <div class="right-column">
-        <TimeSlotSection />
+
+      <template #append>
+        <div class="header-actions">
+          <v-btn
+            icon="mdi-github"
+            variant="text"
+            size="small"
+            href="https://github.com/anthropics/claude-code"
+            target="_blank"
+            title="GitHub Repository"
+          />
+          <v-btn
+            icon="mdi-help-circle-outline"
+            variant="text"
+            size="small"
+            @click="showHelp = !showHelp"
+            title="Aiuto"
+          />
+        </div>
+      </template>
+    </v-app-bar>
+    
+    <!-- Help Dialog -->
+    <HelpDialog v-model="showHelp" />
+    <v-main>
+      <div class="app-main">
+        <div class="left-column">
+          <BrainDumpSection @priority-toggled="handlePriorityToggled" />
+        </div>
+        <div class="right-column">
+          <TimeSlotSection />
+        </div>
       </div>
-    </main>
-  </div>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
+const showHelp = ref(false)
+
 const handlePriorityToggled = (task) => {
   console.log('Priority toggled for task:', task)
 }
@@ -43,19 +87,53 @@ body {
 }
 
 .app-header {
-  background: rgb(var(--v-theme-surface));
-  padding: 1rem 2rem;
-  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: background-color 0.2s ease;
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-secondary)) 100%) !important;
+  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.25) !important;
 }
 
-.app-header h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-align: center;
-  color: rgb(var(--v-theme-on-surface));
+.header-icon {
+  display: flex;
+  align-items: center;
+  animation: pulse 2s infinite;
 }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.header-content {
+  flex: 1;
+  text-align: center;
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.title-main {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.title-sub {
+  font-size: 0.875rem;
+  font-weight: 400;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 
 .app-main {
   flex: 1;
@@ -90,12 +168,21 @@ body {
     padding: 1rem;
   }
   
-  .app-header {
-    padding: 1rem;
+  .title-main {
+    font-size: 1.25rem;
   }
   
-  .app-header h1 {
-    font-size: 1.25rem;
+  .title-sub {
+    font-size: 0.75rem;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .header-icon {
+    animation: none;
   }
 }
 </style>
