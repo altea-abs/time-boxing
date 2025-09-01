@@ -296,3 +296,48 @@ refactor(components): extract HelpDialog into dedicated component
 - Test thoroughly between commits
 
 **This ensures clean git history and professional development practices.**
+
+## Component Organization and Naming
+
+### Folder Structure and Naming Conventions
+When organizing components in folders, follow these strict naming conventions:
+
+#### Component Naming Rules:
+1. **Folder Name Prefix**: Component files MUST start with the folder name
+2. **PascalCase**: Use PascalCase for both folder and component names
+3. **Descriptive Names**: Use clear, descriptive names for functionality
+
+#### Examples:
+```
+// ✅ CORRECT Naming
+app/components/Settings/SettingsDialog.vue
+app/components/Settings/SettingsPriority.vue  
+app/components/Settings/SettingsTimeRange.vue
+app/components/Alert/AlertMaxPriority.vue
+app/components/Task/TaskInput.vue
+
+// ❌ WRONG Naming  
+app/components/Settings/PrioritySettings.vue  // Missing Settings prefix
+app/components/Settings/Dialog.vue           // Missing Settings prefix
+app/components/Alert/MaxPriority.vue         // Missing Alert prefix
+```
+
+#### Import Behavior:
+- **Nuxt Auto-Import**: Uses the filename only, NOT the folder structure
+- `Settings/SettingsDialog.vue` → Import as `<SettingsDialog>`
+- `Settings/SettingsPriority.vue` → Import as `<SettingsPriority>`  
+- `Alert/AlertMaxPriority.vue` → Import as `<AlertMaxPriority>`
+
+#### Benefits:
+- **Clear Organization**: Folder structure groups related components
+- **Unique Names**: Prefix prevents naming conflicts
+- **Easy Identification**: Component name indicates its category/purpose
+- **Consistent Structure**: All components follow same pattern
+
+#### When Creating New Components:
+1. **Identify Category**: Determine which folder/category it belongs to
+2. **Use Prefix**: Start filename with folder name (e.g., Settings → Settings*)
+3. **Descriptive Suffix**: Add clear description of functionality
+4. **PascalCase**: Maintain consistent casing throughout
+
+**This ensures consistent, organized, and conflict-free component structure.**
