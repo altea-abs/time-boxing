@@ -189,6 +189,15 @@
         Svuota tutto
       </v-btn>
     </div>
+
+    <!-- Overwrite confirmation dialog -->
+    <DialogOverwriteSlot
+      :visible="showOverwriteConfirm"
+      :target-slot="pendingDropSlot"
+      :new-task="pendingDropTask"
+      @confirm="confirmOverwrite"
+      @cancel="cancelOverwrite"
+    />
   </div>
 </template>
 
@@ -220,6 +229,11 @@ const availableAdjacentSlots = ref<string[]>([])
 const isMultiAssignMode = ref(false)
 const isCtrlPressed = ref(false)
 const touchedSlots = ref<Set<string>>(new Set())
+
+// Overwrite confirmation dialog state
+const showOverwriteConfirm = ref(false)
+const pendingDropSlot = ref<TimeSlot | null>(null)
+const pendingDropTask = ref<Task | null>(null)
 
 const formatDate = (date: Date): string => {
   return new Intl.DateTimeFormat('it-IT', {
@@ -307,6 +321,20 @@ const handleDrop = (event: DragEvent, slot: TimeSlot) => {
       
     } else {
       // Standard single assignment
+      if (!slot.isAvailable) {
+        console.warn('❌ Target slot is not available (possibly blocked)')
+        resetDragState()
+        return
+      }
+
+      if (slot.task) {
+        // Occupied: ask for overwrite confirmation
+        pendingDropSlot.value = slot
+        pendingDropTask.value = task
+        showOverwriteConfirm.value = true
+        return
+      }
+
       const success = timeSlotsStore.assignTaskToSlot(task, slot.id)
       console.log('🔄 Assignment result:', success)
       
@@ -320,7 +348,10 @@ const handleDrop = (event: DragEvent, slot: TimeSlot) => {
     console.error('💥 Error parsing dropped task data:', error)
   }
   
-  resetDragState()
+  // Only reset immediately if we didn't open a confirmation dialog
+  if (!showOverwriteConfirm.value) {
+    resetDragState()
+  }
 }
 
 const resetDragState = () => {
@@ -467,6 +498,26 @@ onUnmounted(() => {
   window.removeEventListener('ctrlDragStart', handleCtrlDragStart as EventListener)
   window.removeEventListener('dragend', handleDragEndGlobal)
 })
+
+// Overwrite confirmation handlers
+const confirmOverwrite = () => {
+  if (pendingDropSlot.value && pendingDropTask.value) {
+    timeSlotsStore.removeTaskFromSlot(pendingDropSlot.value.id)
+    const success = timeSlotsStore.assignTaskToSlot(pendingDropTask.value, pendingDropSlot.value.id)
+    console.log('📝 Overwrite result:', success)
+  }
+  showOverwriteConfirm.value = false
+  pendingDropSlot.value = null
+  pendingDropTask.value = null
+  resetDragState()
+}
+
+const cancelOverwrite = () => {
+  showOverwriteConfirm.value = false
+  pendingDropSlot.value = null
+  pendingDropTask.value = null
+  resetDragState()
+}
 </script>
 
 <style scoped>
