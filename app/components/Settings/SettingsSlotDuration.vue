@@ -65,7 +65,6 @@ const updateSlotDuration = (value: number) => {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  text-align: center;
 }
 
 .setting-name {
