@@ -27,7 +27,7 @@
             icon="mdi-github"
             variant="text"
             size="small"
-            href="https://github.com/anthropics/claude-code"
+            href="https://github.com/altea-abs/time-boxing"
             target="_blank"
             title="GitHub Repository"
           />

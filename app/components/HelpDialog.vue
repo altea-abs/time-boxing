@@ -136,7 +136,7 @@
           color="primary"
           variant="outlined"
           prepend-icon="mdi-github"
-          href="https://github.com/anthropics/claude-code"
+          href="https://github.com/altea-abs/time-boxing"
           target="_blank"
           size="small"
         >
