@@ -23,83 +23,10 @@
               Gestione Priorità
             </h3>
             
-            <div class="setting-item">
-              <div class="setting-label">
-                <div class="setting-name">Numero massimo di priorità</div>
-                <div class="setting-description">
-                  Imposta quante priorità puoi selezionare contemporaneamente
-                </div>
-              </div>
-              
-              <div class="setting-control">
-                <v-slider
-                  v-model="localMaxPriorities"
-                  :min="1"
-                  :max="10"
-                  step="1"
-                  show-ticks="always"
-                  tick-size="4"
-                  color="primary"
-                  track-color="grey-lighten-3"
-                  thumb-label="always"
-                  class="priority-slider"
-                >
-                  <template v-slot:prepend>
-                    <v-btn
-                      icon="mdi-minus"
-                      size="small"
-                      variant="outlined"
-                      @click="decrementPriorities"
-                      :disabled="localMaxPriorities <= 1"
-                    />
-                  </template>
-                  <template v-slot:append>
-                    <v-btn
-                      icon="mdi-plus"
-                      size="small"
-                      variant="outlined"
-                      @click="incrementPriorities"
-                      :disabled="localMaxPriorities >= 10"
-                    />
-                  </template>
-                </v-slider>
-                
-                <div class="priority-preview">
-                  <div class="priority-chips">
-                    <v-chip
-                      v-for="n in localMaxPriorities"
-                      :key="n"
-                      size="small"
-                      color="primary"
-                      variant="outlined"
-                      class="priority-chip"
-                    >
-                      {{ n }}
-                    </v-chip>
-                    <div v-if="localMaxPriorities < 10" class="disabled-chips">
-                      <v-chip
-                        v-for="n in (10 - localMaxPriorities)"
-                        :key="n + localMaxPriorities"
-                        size="small"
-                        color="grey"
-                        variant="outlined"
-                        disabled
-                        class="priority-chip"
-                      >
-                        {{ n + localMaxPriorities }}
-                      </v-chip>
-                    </div>
-                  </div>
-                  <div class="priority-info">
-                    <v-icon icon="mdi-information" size="small" color="info" class="mr-1" />
-                    <span class="info-text">
-                      Potrai selezionare fino a <strong>{{ localMaxPriorities }}</strong> 
-                      task come priorità per la giornata
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <SettingsPriority
+              :max-priorities="localMaxPriorities"
+              @update:max-priorities="localMaxPriorities = $event"
+            />
           </div>
 
           <!-- Time Grid Settings Section -->
@@ -282,17 +209,6 @@ const formatHour = (hour: number): string => {
   return `${hour.toString().padStart(2, '0')}:00`
 }
 
-const incrementPriorities = () => {
-  if (localMaxPriorities.value < 10) {
-    localMaxPriorities.value++
-  }
-}
-
-const decrementPriorities = () => {
-  if (localMaxPriorities.value > 1) {
-    localMaxPriorities.value--
-  }
-}
 
 const resetToDefaults = () => {
   localMaxPriorities.value = 5
@@ -392,47 +308,6 @@ const close = () => {
 }
 
 
-.priority-slider {
-  margin-bottom: 1rem;
-}
-
-.priority-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.priority-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.priority-chip {
-  min-width: 32px;
-}
-
-.disabled-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  opacity: 0.4;
-}
-
-.priority-info {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  background: rgba(var(--v-theme-info), 0.1);
-  border-radius: 6px;
-  border-left: 3px solid rgb(var(--v-theme-info));
-}
-
-.info-text {
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
 
 .hour-select,
 .duration-select {
@@ -477,9 +352,6 @@ const close = () => {
     min-width: unset;
   }
   
-  .priority-chips {
-    justify-content: center;
-  }
   
 }
 </style>
