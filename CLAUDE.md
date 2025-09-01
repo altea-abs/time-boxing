@@ -23,9 +23,9 @@ This is a **Brain Dump & Timeboxing** application built with **Nuxt 4**, **Vue 3
 
 ## State Management Architecture
 
-### Dual Store System
+### Multi-Store System
 
-The application uses two specialized Pinia stores that work together:
+The application uses specialized Pinia stores that work together:
 
 #### 1. `useTasks.ts` - Task CRUD Operations
 - **Purpose**: Primary task management (create, read, update, delete)
@@ -38,6 +38,19 @@ The application uses two specialized Pinia stores that work together:
 - **Key Actions**: `add(task)`, `remove(task)`, `removeByIndex(index)`
 - **Storage**: localStorage key `braindump-priorities`
 - **Business Logic**: Handles max priority limits, validation, alerts
+- **Reactive Arrays**: Automatically resizes when maxPriorities changes
+
+#### 3. `useTimeSlots.ts` - Time Grid Management
+- **Purpose**: Dynamic time slot generation and task assignment
+- **Key Actions**: `generateSlotsForDate()`, `assignTaskToSlot()`, `regenerateCurrentSlots()`
+- **Storage**: localStorage key `braindump-timeslots`
+- **Features**: Multi-assignment support, drag & drop, statistics
+
+#### 4. `useSettings.ts` - Configuration Management
+- **Purpose**: Dynamic override of runtime configuration
+- **Key Actions**: `updateMaxPriorities()`, `updateTimeGrid()`, `resetToDefaults()`
+- **Storage**: localStorage key `braindump-settings`
+- **Features**: Real-time updates, multi-tab sync, fallback to .env defaults
 
 ### Store Interaction Pattern
 Components orchestrate both stores for priority management:
@@ -58,35 +71,51 @@ if (success) {
 
 ### Runtime Configuration Flow
 ```
-.env → nuxt.config.ts → usePrioritiesStore → Components
+.env → nuxt.config.ts → useSettings → [usePriorities, useTimeSlots] → Components
 ```
 
 **Environment Variables** (`.env`):
 - `NUXT_MAX_PRIORITIES=5` (1-10 range, default 5)
 - `NUXT_ALERT_AUTO_HIDE_DELAY=5000` (1000-30000ms)
 - `NUXT_AUTO_SAVE_ENABLED=true`
+- `NUXT_DEFAULT_START_HOUR=9` (6-22 range, default 9)
+- `NUXT_DEFAULT_END_HOUR=18` (6-22 range, default 18)  
+- `NUXT_DEFAULT_SLOT_DURATION=30` (15/30/45/60min, default 30)
 
 **Configuration Rules**:
 - Components NEVER access `useRuntimeConfig()` directly
-- All configuration flows through `usePrioritiesStore`
+- All configuration flows through `useSettings` store first
+- Other stores consume settings via `storeToRefs(useSettings())`
 - Runtime validation with safe min/max constraints
 - Reactive updates when config changes
 
+### Dynamic Settings System
+- **Settings Panel**: Modal dialog with Alt+S shortcut, Esc to close
+- **Real-time Override**: localStorage overrides .env defaults
+- **Multi-tab Sync**: Settings changes sync across browser tabs  
+- **Reactive Updates**: UI updates immediately when settings change
+
 **Changing Configuration**:
-1. Update `.env` values
-2. Restart dev server (`npm run dev`)
-3. Store automatically reflects new config with validation
-4. UI updates reactively
+1. **Via Settings Panel** (Recommended): Alt+S → modify settings → save (immediate effect)
+2. **Via .env**: Update values → restart dev server → settings store uses new defaults
+3. **Reset to Defaults**: Settings panel "Ripristina Default" button
 
 ## Component Architecture
 
 ### Main Structure
 ```
-app.vue
-├── BrainDumpSection.vue (Orchestrator)
-│   ├── PrioritySection.vue (Shows 3+ priority slots)
+app.vue (with Alt+S settings shortcut and modern header)
+├── BrainDumpSection.vue (Left column orchestrator)
+│   ├── PrioritySection.vue (Dynamic priority slots 1-10)
 │   ├── AlertMaxPriority.vue (Vuetify v-alert)
-│   └── TaskInput.vue (Vuetify v-text-field with + icon)
+│   ├── TaskInput.vue (Vuetify v-text-field with + icon)
+│   └── NotesSection.vue (Daily notes with copy/clear)
+├── TimeSlotSection.vue (Right column - dynamic time grid)
+└── Settings/ (Modal components - 800px width)
+    ├── SettingsDialog.vue (Responsive 2-column layout)
+    ├── SettingsPriority.vue (Slider 1-10 with +/- buttons)
+    ├── SettingsTimeRange.vue (Start/end hour selects)
+    └── SettingsSlotDuration.vue (15/30/45/60min select)
 ```
 
 ### Communication Patterns
@@ -147,12 +176,42 @@ store.priorities[0] = newTask
 ## Current Implementation Status
 
 - ✅ Task management with CRUD operations
-- ✅ Priority system with configurable limits
-- ✅ Runtime configuration via .env files
-- ✅ LocalStorage persistence with multi-tab sync
-- ✅ Vuetify Material Design integration
+- ✅ Priority system with configurable limits (1-10, reactive)
+- ✅ Runtime configuration via .env files + dynamic settings panel
+- ✅ LocalStorage persistence with multi-tab sync (4 stores)
+- ✅ Vuetify Material Design integration with modern header
 - ✅ Complete TypeScript type system
-- 🔄 Future: Timeboxing/scheduling features
+- ✅ Time slots system with dynamic grid generation
+- ✅ Settings panel with real-time preview and validation
+- ✅ Keyboard shortcuts (Alt+S for settings, Esc to close)
+- ✅ Responsive design (2-column on desktop, single on mobile)
+- ✅ Daily notes section replacing task assignments
+- ✅ Drag & drop with priority synchronization in time slots
+
+## Keyboard Shortcuts & User Interactions
+
+### Global Shortcuts
+- **`Alt+S`**: Open/close settings dialog
+- **`Esc`**: Close any open modal/dialog
+- **`Ctrl+Drag`**: Multi-assignment in time slots
+
+### Settings Dialog Features
+- **Modal Width**: 800px (increased from 500px for better layout)
+- **Responsive Layout**: 2 columns on desktop, single column on mobile
+- **Button Layout**: Reset left-aligned, Cancel/Save right-aligned on desktop
+- **Real-time Preview**: Shows statistics updated as you change settings
+- **Form Validation**: All inputs have min/max constraints with safe defaults
+
+### Notes Section Features
+- **Auto-save**: Changes persist automatically to localStorage
+- **Copy Button**: One-click copy all notes to clipboard
+- **Clear Button**: Clear all notes with single click
+- **Persistent Storage**: Multi-tab synchronization
+
+### Drag & Drop Enhancements  
+- **Entire Slot Draggable**: Fixed issue where users selected text instead of dragging
+- **Priority Sync**: Tasks dragged to time slots maintain priority status with star indicator
+- **Multi-slot Support**: Tasks can be assigned to multiple time slots
 
 The architecture provides clear separation of concerns, type safety, and reactive configuration management suitable for a productivity/timeboxing application.
 

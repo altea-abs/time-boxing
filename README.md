@@ -26,6 +26,7 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 - **Sistema di priorità** configurabile (1-10 priorità, default 5)
 - **Drag & Drop** intuitivo per riorganizzare
 - **Persistenza automatica** con sincronizzazione multi-tab
+- **Sezione Note** per riflessioni giornaliere e promemoria
 
 ### ⏰ **Time Slots**
 - **Griglia temporale personalizzabile** (orari di lavoro, durata slot)
@@ -40,11 +41,19 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 - **Visualizzazione task assegnati** con raggruppamento per attività
 - **Contatori dinamici** tempo programmato e priorità
 
+### ⚙️ **Pannello Impostazioni**
+- **Configurazione dinamica** numero priorità (1-10)
+- **Orari di lavoro personalizzabili** (inizio/fine giornata)
+- **Durata slot configurabile** (15/30/45/60 minuti)
+- **Anteprima in tempo reale** delle modifiche
+- **Shortcut keyboard**: `Alt+S` per aprire, `Esc` per chiudere
+
 ### 🎨 **Design & UX**
 - **Material Design 3** con Vuetify
 - **Dark/Light Mode automatico** basato su preferenze sistema
 - **Design responsivo** ottimizzato per mobile e desktop
 - **Animazioni fluide** per feedback visivo immediato
+- **Header modernizzato** con gradient e animazioni
 
 
 ## 🛠 Tecnologie Utilizzate
@@ -67,11 +76,17 @@ app/
 │   ├── BrainDumpSection.vue
 │   ├── TimeSlotSection.vue
 │   ├── PrioritySection.vue
-│   └── AssignedTasksSection.vue
+│   ├── NotesSection.vue
+│   └── Settings/         # Componenti pannello impostazioni
+│       ├── SettingsDialog.vue
+│       ├── SettingsPriority.vue
+│       ├── SettingsTimeRange.vue
+│       └── SettingsSlotDuration.vue
 ├── stores/              # Pinia stores per state management
 │   ├── useTasks.ts      # CRUD operazioni task
 │   ├── usePriorities.ts # Gestione priorità (1-10 slot)
-│   └── useTimeSlots.ts  # Gestione time slots e assegnazioni
+│   ├── useTimeSlots.ts  # Gestione time slots e assegnazioni
+│   └── useSettings.ts   # Configurazione dinamica applicazione
 ├── types/               # Definizioni TypeScript
 │   ├── task.ts
 │   ├── components.ts
@@ -101,6 +116,11 @@ L'applicazione utilizza un'architettura di store specializzati:
 - Assegnazione task → slot con supporto multi-assignment
 - Statistiche in tempo reale e visualizzazioni
 
+#### 4. **`useSettings.ts`** - Configurazione Dinamica
+- Override runtime dei valori di configurazione
+- Persistenza localStorage delle impostazioni personalizzate
+- Reattività completa per aggiornamenti in tempo reale
+
 ### ⚙️ Sistema di Configurazione
 
 ```bash
@@ -108,9 +128,14 @@ L'applicazione utilizza un'architettura di store specializzati:
 NUXT_MAX_PRIORITIES=5              # Numero max priorità (1-10)
 NUXT_ALERT_AUTO_HIDE_DELAY=5000    # Durata alert in ms
 NUXT_AUTO_SAVE_ENABLED=true        # Auto-save attivo
+NUXT_DEFAULT_START_HOUR=9          # Orario inizio giornata
+NUXT_DEFAULT_END_HOUR=18           # Orario fine giornata
+NUXT_DEFAULT_SLOT_DURATION=30      # Durata slot in minuti
 ```
 
-**Flusso di configurazione**: `.env` → `nuxt.config.ts` → `usePrioritiesStore` → Componenti
+**Flusso di configurazione**: `.env` → `nuxt.config.ts` → `useSettings` → Stores → Componenti
+
+**Configurazione dinamica**: Il pannello impostazioni permette di sovrascrivere i valori di default in tempo reale, con persistenza localStorage e sincronizzazione multi-tab.
 
 ## 🚀 Installazione e Avvio
 
@@ -162,10 +187,22 @@ npm run typecheck    # Controllo tipi TypeScript
   - 🔘 Attiva toggle "Multi-Assign" → drag attraverso più slot
   - ⌨️ Tieni `Ctrl` + drag attraverso slot multipli
 
-### 4. **Visualizzazione Attività**
-- Sezione "Task Assegnati" mostra pianificazione giornaliera
-- Raggruppamento per task con slot multipli
-- Statistiche tempo totale programmato
+### 4. **Note Giornaliere**
+- Sezione dedicata per riflessioni e promemoria quotidiani
+- Persistenza automatica con localStorage
+- Funzioni copia/cancella per gestione veloce
+
+### 5. **Pannello Impostazioni** (`Alt+S`)
+- **Priorità**: Configura numero massimo (1-10)
+- **Orari**: Personalizza inizio/fine giornata lavorativa  
+- **Slot**: Scegli durata (15/30/45/60 minuti)
+- **Anteprima**: Visualizza statistiche aggiornate in tempo reale
+- **Layout responsivo**: Due colonne su desktop, singola su mobile
+
+### ⌨️ **Keyboard Shortcuts**
+- **`Alt+S`**: Apri/chiudi pannello impostazioni
+- **`Esc`**: Chiudi modali aperti
+- **`Ctrl+Drag`**: Multi-assegnazione task su time slots
 
 ## 🔧 Personalizzazione
 
