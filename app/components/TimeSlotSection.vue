@@ -483,7 +483,6 @@ onUnmounted(() => {
 
 .title-section {
   margin-bottom: 0.75rem;
-  text-align: center;
 }
 
 .title-text {
@@ -496,14 +495,14 @@ onUnmounted(() => {
 .date-with-navigation {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.5rem;
 }
 
 .date-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.25rem;
   min-width: 200px;
 }
@@ -513,7 +512,6 @@ onUnmounted(() => {
   font-weight: 400;
   margin: 0;
   color: rgb(var(--v-theme-on-surface-variant));
-  text-align: center;
 }
 
 .nav-btn {
