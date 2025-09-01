@@ -88,6 +88,11 @@ onMounted(() => {
       event.preventDefault()
       showHelp.value = !showHelp.value
     }
+    // Alt+G to open repository
+    if (event.altKey && event.key.toLowerCase() === 'g') {
+      event.preventDefault()
+      window.open('https://github.com/altea-abs/time-boxing', '_blank')
+    }
   }
   
   document.addEventListener('keydown', handleKeydown)
