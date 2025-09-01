@@ -29,20 +29,7 @@
         </div>
       </div>
       
-      <!-- Multi-assign mode indicator -->
-      <div v-if="isEffectiveMultiAssignMode" class="multi-assign-indicator">
-        <div class="multi-assign-banner">
-          <div class="multi-assign-content">
-            <span class="multi-assign-text">⚡ MODALITÀ MULTI-ASSEGNAZIONE ATTIVA</span>
-            <div class="hotkey-display">
-              <span class="hotkey-chip">🎹 Ctrl + Trascina (oppure toggle attivo)</span>
-              <span class="touched-counter" v-if="touchedSlots.size > 0">
-                {{ touchedSlots.size }} slot selezionati
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Multi-assign banner removed per request -->
 
       <div class="stats-row">
         <v-chip color="primary" variant="outlined" size="small" class="mr-2">
@@ -804,77 +791,7 @@ const confirmSwap = () => {
   }
 }
 
-/* Multi-assign indicator styles */
-.multi-assign-indicator {
-  margin-bottom: 1rem;
-  animation: slideInFromTop 0.3s ease-out;
-}
-
-@keyframes slideInFromTop {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.multi-assign-banner {
-  background: linear-gradient(135deg, #2196F3, #1976D2);
-  color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid #FFC107;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-  animation: pulse-glow 2s infinite;
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-  }
-  50% {
-    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
-  }
-}
-
-.multi-assign-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.multi-assign-text {
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.hotkey-display {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.hotkey-chip {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.25rem 0.5rem;
-  border-radius: 16px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  backdrop-filter: blur(4px);
-}
-
-.touched-counter {
-  font-size: 0.75rem;
-  background: rgba(255, 193, 7, 0.9);
-  color: #000;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-weight: 600;
-}
+/* removed multi-assign banner styles */
 
 /* Multi-assign toggle button */
 .multi-assign-toggle {
