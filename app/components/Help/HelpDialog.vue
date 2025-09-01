@@ -181,12 +181,13 @@ watch(isVisible, (newValue) => {
 }
 
 :deep(.v-stepper-item) {
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
 }
 
 :deep(.v-stepper-item__avatar) {
   background: rgb(var(--v-theme-primary));
   color: rgb(var(--v-theme-on-primary));
+  margin-right: 1rem !important;
 }
 
 :deep(.v-stepper-item__avatar.v-stepper-item--complete .v-stepper-item__avatar) {
@@ -212,7 +213,11 @@ watch(isVisible, (newValue) => {
   }
   
   :deep(.v-stepper-item) {
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  :deep(.v-stepper-item__avatar) {
+    margin-right: 0.75rem !important;
   }
   
   :deep(.v-stepper-item__title) {
