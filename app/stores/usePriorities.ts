@@ -25,6 +25,25 @@ export const usePrioritiesStore = defineStore('priorities', () => {
   // State
   const priorities = ref<(Task | null)[]>(new Array(maxPriorities.value).fill(null))
   const showMaxAlert = ref(false)
+  
+  // Watch maxPriorities changes to resize the priorities array
+  watch(maxPriorities, (newMax, oldMax) => {
+    if (newMax !== oldMax) {
+      const currentPriorities = [...priorities.value]
+      
+      // Resize array to new max
+      if (newMax > currentPriorities.length) {
+        // Add empty slots
+        priorities.value = [...currentPriorities, ...new Array(newMax - currentPriorities.length).fill(null)]
+      } else {
+        // Remove excess slots, keeping only the first newMax items
+        priorities.value = currentPriorities.slice(0, newMax)
+      }
+      
+      savePriorities()
+      console.log(`⚙️ Priorities array resized from ${oldMax} to ${newMax} slots`)
+    }
+  }, { immediate: false })
 
   // Getters
   const priorityCount = computed(() => {
