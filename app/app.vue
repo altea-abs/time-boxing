@@ -26,7 +26,7 @@
           <v-btn
             icon="mdi-github"
             variant="text"
-            size="small"
+            size="default"
             href="https://github.com/altea-abs/time-boxing"
             target="_blank"
             title="GitHub Repository"
@@ -34,7 +34,7 @@
           <v-btn
             icon="mdi-help-circle-outline"
             variant="text"
-            size="small"
+            size="default"
             @click="showHelp = !showHelp"
             title="Aiuto"
           />
