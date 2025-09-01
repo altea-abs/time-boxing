@@ -17,15 +17,6 @@
           />
           <div class="date-container">
             <p class="date-text">{{ formatDate(currentDate) }}</p>
-            <v-btn
-              variant="outlined"
-              size="x-small"
-              @click="goToToday"
-              :disabled="isToday"
-              class="today-btn"
-            >
-              Oggi
-            </v-btn>
           </div>
           <v-btn
             icon="mdi-chevron-right"
@@ -422,11 +413,18 @@ const handleTaskDragEnd = () => {
   console.log('🏁 Drag operation ended, reset adjacent slots highlighting')
 }
 
-// Keyboard listeners for Ctrl+Drag
+// Keyboard listeners for Ctrl+Drag and Alt+T
 const handleKeyDown = (event: KeyboardEvent) => {
   if ((event.key === 'Control' || event.key === 'Meta') && !isCtrlPressed.value) {
     isCtrlPressed.value = true
     console.log('🎹 Ctrl key pressed - ready for multi-assign on next drag')
+  }
+  
+  // Alt+T shortcut to go to today
+  if (event.altKey && event.key.toLowerCase() === 't') {
+    event.preventDefault()
+    goToToday()
+    console.log('🎯 Alt+T pressed - navigating to today')
   }
 }
 
@@ -518,9 +516,6 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.today-btn {
-  min-width: 60px;
-}
 
 .stats-row {
   display: flex;
