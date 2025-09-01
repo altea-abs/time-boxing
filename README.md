@@ -237,6 +237,9 @@ npm run typecheck    # Controllo tipi TypeScript
 - **`Alt+G`**: Apri repository GitHub
 - **`Esc`**: Chiudi modali aperti
 - **`Ctrl+Drag`**: Multi-assegnazione task su time slots
+ - **`Ctrl/Cmd+Z`**: Annulla ultima operazione (Undo)
+ - **`Ctrl/Cmd+Y`**: Ripristina operazione (Redo)
+ - **`Ctrl/Cmd+Shift+Z`**: Ripristina alternativa (Redo)
 
 ## 🔧 Personalizzazione
 
