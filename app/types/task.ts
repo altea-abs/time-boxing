@@ -13,6 +13,9 @@ export interface Task {
   
   /** Data di creazione del task */
   createdAt: Date
+  
+  /** Data di riferimento per il task (formato YYYY-MM-DD) */
+  date: string
 }
 
 /**
@@ -21,6 +24,7 @@ export interface Task {
 export interface CreateTaskInput {
   text: string
   isPriority?: boolean
+  date?: string // Se non specificata, usa la data corrente
 }
 
 /**
@@ -29,6 +33,7 @@ export interface CreateTaskInput {
 export interface UpdateTaskInput {
   text?: string
   isPriority?: boolean
+  date?: string
 }
 
 /**

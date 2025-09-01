@@ -22,26 +22,41 @@ export const usePrioritiesStore = defineStore('priorities', () => {
     return `Priorità (${maxPriorities.value} max)`
   })
   
-  // State
-  const priorities = ref<(Task | null)[]>(new Array(maxPriorities.value).fill(null))
+  // State - now organized by date
+  const prioritiesByDate = ref<Record<string, (Task | null)[]>>({})
   const showMaxAlert = ref(false)
   
-  // Watch maxPriorities changes to resize the priorities array
+  // Get current date priorities
+  const priorities = computed(() => {
+    const timeSlotsStore = useTimeSlotsStore()
+    const currentDateString = timeSlotsStore.currentDate.toISOString().split('T')[0]
+    
+    if (!prioritiesByDate.value[currentDateString]) {
+      prioritiesByDate.value[currentDateString] = new Array(maxPriorities.value).fill(null)
+    }
+    
+    return prioritiesByDate.value[currentDateString] || new Array(maxPriorities.value).fill(null)
+  })
+  
+  // Watch maxPriorities changes to resize all priorities arrays
   watch(maxPriorities, (newMax, oldMax) => {
     if (newMax !== oldMax) {
-      const currentPriorities = [...priorities.value]
-      
-      // Resize array to new max
-      if (newMax > currentPriorities.length) {
-        // Add empty slots
-        priorities.value = [...currentPriorities, ...new Array(newMax - currentPriorities.length).fill(null)]
-      } else {
-        // Remove excess slots, keeping only the first newMax items
-        priorities.value = currentPriorities.slice(0, newMax)
-      }
+      // Resize all existing priority arrays for all dates
+      Object.keys(prioritiesByDate.value).forEach(dateString => {
+        const currentPriorities = [...prioritiesByDate.value[dateString]]
+        
+        // Resize array to new max
+        if (newMax > currentPriorities.length) {
+          // Add empty slots
+          prioritiesByDate.value[dateString] = [...currentPriorities, ...new Array(newMax - currentPriorities.length).fill(null)]
+        } else {
+          // Remove excess slots, keeping only the first newMax items
+          prioritiesByDate.value[dateString] = currentPriorities.slice(0, newMax)
+        }
+      })
       
       savePriorities()
-      console.log(`⚙️ Priorities array resized from ${oldMax} to ${newMax} slots`)
+      console.log(`⚙️ All priorities arrays resized from ${oldMax} to ${newMax} slots`)
     }
   }, { immediate: false })
 
@@ -113,7 +128,10 @@ export const usePrioritiesStore = defineStore('priorities', () => {
   }
 
   const clear = (): void => {
-    priorities.value = new Array(maxPriorities.value).fill(null)
+    const timeSlotsStore = useTimeSlotsStore()
+    const currentDateString = timeSlotsStore.currentDate.toISOString().split('T')[0]
+    
+    prioritiesByDate.value[currentDateString] = new Array(maxPriorities.value).fill(null)
     savePriorities()
   }
 
@@ -169,12 +187,35 @@ export const usePrioritiesStore = defineStore('priorities', () => {
     }
     return false
   }
+  
+  // Cleanup old priorities based on retention policy
+  const cleanupOldPriorities = (): void => {
+    const maxDays = config.public.maxDaysRetention
+    const today = new Date()
+    const cutoffDate = new Date(today)
+    cutoffDate.setDate(today.getDate() - maxDays)
+    
+    const cutoffDateString = cutoffDate.toISOString().split('T')[0]
+    
+    // Count dates to be removed for logging
+    const datesToRemove = Object.keys(prioritiesByDate.value).filter(date => date < cutoffDateString)
+    
+    if (datesToRemove.length > 0) {
+      // Remove old priority dates
+      datesToRemove.forEach(date => {
+        delete prioritiesByDate.value[date]
+      })
+      
+      console.log(`🧹 Cleaned up priorities for ${datesToRemove.length} old dates older than ${maxDays} days`)
+      savePriorities()
+    }
+  }
 
   // Persistence
   const savePriorities = (): void => {
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('braindump-priorities', JSON.stringify(priorities.value))
+        localStorage.setItem('braindump-priorities', JSON.stringify(prioritiesByDate.value))
       } catch (error) {
         console.error('Error saving priorities to localStorage:', error)
       }
@@ -186,21 +227,43 @@ export const usePrioritiesStore = defineStore('priorities', () => {
       try {
         const saved = localStorage.getItem('braindump-priorities')
         if (saved) {
-          const parsedPriorities = JSON.parse(saved)
-          // Assicurarsi che sia sempre un array di lunghezza corretta
-          priorities.value = new Array(maxPriorities.value).fill(null)
-          parsedPriorities.forEach((priority: any, index: number) => {
-            if (index < maxPriorities.value && priority) {
-              priorities.value[index] = {
-                ...priority,
-                createdAt: new Date(priority.createdAt)
-              }
+          const parsedData = JSON.parse(saved)
+          
+          // Check if it's the old format (array) or new format (object by date)
+          if (Array.isArray(parsedData)) {
+            // Migration: convert old format to new format
+            const today = new Date().toISOString().split('T')[0]
+            prioritiesByDate.value = {
+              [today]: parsedData.map((priority: any) => 
+                priority ? {
+                  ...priority,
+                  createdAt: new Date(priority.createdAt),
+                  date: priority.date || today // Add date if missing
+                } : null
+              )
             }
-          })
+          } else {
+            // New format: object with dates as keys
+            prioritiesByDate.value = {}
+            Object.entries(parsedData).forEach(([dateString, priorities]: [string, any]) => {
+              if (Array.isArray(priorities)) {
+                prioritiesByDate.value[dateString] = priorities.map((priority: any) =>
+                  priority ? {
+                    ...priority,
+                    createdAt: new Date(priority.createdAt),
+                    date: priority.date || dateString
+                  } : null
+                )
+              }
+            })
+          }
+          
+          // Run cleanup after loading
+          cleanupOldPriorities()
         }
       } catch (error) {
         console.error('Error loading priorities from localStorage:', error)
-        priorities.value = new Array(maxPriorities.value).fill(null)
+        prioritiesByDate.value = {}
       }
     }
   }
@@ -240,6 +303,7 @@ export const usePrioritiesStore = defineStore('priorities', () => {
     getTaskAtIndex,
     getAllSlots,
     updateTaskInPriorities,
+    cleanupOldPriorities,
     loadPriorities,
     savePriorities
   }

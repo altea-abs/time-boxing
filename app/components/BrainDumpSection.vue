@@ -74,7 +74,7 @@ const prioritiesStore = usePrioritiesStore()
 const timeSlotsStore = useTimeSlotsStore()
 
 // Extract reactive references from stores
-const { tasks } = storeToRefs(tasksStore)
+const { tasksForCurrentDate: tasks } = storeToRefs(tasksStore)
 const { showMaxAlert } = storeToRefs(prioritiesStore)
 
 // Delete confirmation state

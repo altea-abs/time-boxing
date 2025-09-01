@@ -106,8 +106,14 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   const generateSlotsForDate = (date: Date): void => {
     const dateString = date.toISOString().split('T')[0]
     
-    // Run cleanup before generating new slots
+    // Run cleanup for all stores before generating new slots
     cleanupOldSlots()
+    
+    // Also cleanup tasks and priorities
+    const tasksStore = useTasksStore()
+    const prioritiesStore = usePrioritiesStore()
+    tasksStore.cleanupOldTasks()
+    prioritiesStore.cleanupOldPriorities()
     
     // Keep existing slots for other dates and for the current date if they exist
     const existingSlotsForOtherDates = timeSlots.value.filter(slot => 

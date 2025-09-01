@@ -70,7 +70,7 @@ export const useSettingsStore = defineStore('settings', () => {
   // Blocked slots management
   const addBlockedSlot = (input: CreateBlockedSlotInput): BlockedSlot => {
     const newSlot: BlockedSlot = {
-      id: `blocked-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `blocked-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       ...input,
       enabled: true,
       createdAt: new Date()
