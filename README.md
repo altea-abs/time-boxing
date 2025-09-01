@@ -32,7 +32,7 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 
 ### ⏰ **Time Slots**
 - **Griglia temporale personalizzabile** (orari di lavoro, durata slot)
-- **Navigazione multi-giorno** con frecce precedente/successivo e pulsante "Today"
+- **Navigazione multi-giorno** con frecce precedente/successivo e scorciatoia `Alt+T`
 - **Slot bloccati** configurabili per attività ricorrenti (riunioni, pranzo, ecc.)
 - **Assegnazione flessibile** task → slot temporali con visualizzazione attività bloccate
 - **Multi-Assignment** con due modalità:
@@ -204,7 +204,7 @@ npm run typecheck    # Controllo tipi TypeScript
 
 ### 3. **Time Slots - Pianificazione Multi-Giorno**
 - Griglia oraria personalizzabile (default 9:00-18:00, slot 30min)
-- **Navigazione giorni**: Usa frecce ← → o pulsante "Today" per cambiare data
+- **Navigazione giorni**: Usa frecce ← → o scorciatoia `Alt+T` per andare a oggi
 - **Slot bloccati**: Visualizza automaticamente attività ricorrenti configurate
 - **Assegnazione Singola**: Drag task → slot disponibile
 - **Multi-Assignment**: 
@@ -232,6 +232,9 @@ npm run typecheck    # Controllo tipi TypeScript
 
 ### ⌨️ **Keyboard Shortcuts**
 - **`Alt+S`**: Apri/chiudi pannello impostazioni
+- **`Alt+T`**: Vai a oggi nei time slot
+- **`Alt+H`**: Apri/chiudi guida interattiva
+- **`Alt+G`**: Apri repository GitHub
 - **`Esc`**: Chiudi modali aperti
 - **`Ctrl+Drag`**: Multi-assegnazione task su time slots
 

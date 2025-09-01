@@ -31,6 +31,12 @@
             </div>
             <div class="shortcut-item">
               <div class="shortcut-keys">
+                <kbd>Alt</kbd> + <kbd>T</kbd>
+              </div>
+              <span>Vai a oggi nei time slot</span>
+            </div>
+            <div class="shortcut-item">
+              <div class="shortcut-keys">
                 <kbd>Alt</kbd> + <kbd>G</kbd>
               </div>
               <span>Apre il repository GitHub</span>
