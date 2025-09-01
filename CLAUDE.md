@@ -225,3 +225,31 @@ refactor(components): extract HelpDialog into dedicated component
 - CommitLint validates all commit messages
 
 **Remember: Always commit automatically - never skip this step!**
+
+## Development Guidelines
+
+### IMPORTANT: Feature Implementation Policy
+**Claude MUST implement ONLY the specific features explicitly requested by the user.** Never add additional features, enhancements, or "nice-to-have" functionality without explicit user request.
+
+#### Core Principles:
+1. **Exact Requirements Only**: Implement exactly what the user asks for, nothing more
+2. **No Assumptions**: Don't assume the user wants related or complementary features
+3. **No Proactive Additions**: Don't add features "while you're at it" or "for completeness"
+4. **Ask Before Expanding**: If a feature seems incomplete, ask the user before adding anything
+
+#### Examples:
+- ✅ **User asks**: "Add setting to change number of priorities"  
+  **Correct**: Add only priority number control
+- ❌ **Wrong**: Add priority control + time settings + other configurations
+
+- ✅ **User asks**: "Fix the drag and drop issue"  
+  **Correct**: Fix only the specific drag and drop problem
+- ❌ **Wrong**: Fix drag + add new drag features + improve UI
+
+#### When in Doubt:
+- Implement the minimum viable solution
+- Ask the user if they want additional features
+- Focus on the specific problem mentioned
+- Avoid feature creep and scope expansion
+
+**This ensures focused development and prevents unwanted complexity.**
