@@ -1,9 +1,9 @@
 <template>
   <v-alert
     v-if="visible"
-    type="error"
-    color="error"
-    variant="outlined"
+    
+    border-color="error"
+    border="start"
     closable
     @click:close="handleClose"
     class="alert-max-priority"
@@ -63,6 +63,8 @@ onUnmounted(() => {
 .alert-max-priority {
   margin-bottom: 0.5rem;
   border-radius: 8px;
+  min-height: auto;
+  height: auto;
 }
 
 .alert-max-priority :deep(.v-alert__content) {
