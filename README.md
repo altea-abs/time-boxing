@@ -36,7 +36,7 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 
 ## 🚀 Demo Live
 
-🌐 **[Prova l'applicazione qui](https://plongo.github.io/timeboxing/)**
+🌐 **[Prova l'applicazione qui](https://altea-abs.github.io/time-boxing/)**
 
 ## 🛠 Tecnologie Utilizzate
 
@@ -112,8 +112,8 @@ NUXT_AUTO_SAVE_ENABLED=true        # Auto-save attivo
 ### Setup Rapido
 ```bash
 # Clone del repository
-git clone https://github.com/plongo/timeboxing.git
-cd timeboxing
+git clone https://github.com/altea-abs/time-boxing.git
+cd time-boxing
 
 # Installazione dipendenze
 npm install
@@ -248,6 +248,6 @@ Questo progetto è distribuito sotto licenza **MIT**. Vedi il file `LICENSE` per
 
 **Costruito con ❤️ usando Nuxt 4 e Vue 3**
 
-[🌐 Demo](https://plongo.github.io/timeboxing/) • [📖 Docs](https://github.com/plongo/timeboxing/wiki) • [🐛 Issues](https://github.com/plongo/timeboxing/issues) • [💬 Discussions](https://github.com/plongo/timeboxing/discussions)
+[🌐 Demo](https://altea-abs.github.io/time-boxing/) • [📖 Docs](https://github.com/altea-abs/time-boxing/wiki) • [🐛 Issues](https://github.com/altea-abs/time-boxing/issues) • [💬 Discussions](https://github.com/altea-abs/time-boxing/discussions)
 
 </div>
