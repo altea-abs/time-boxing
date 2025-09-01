@@ -3,10 +3,10 @@
     <!-- Header con statistiche -->
     <div class="section-header">
       <div class="title-with-navigation">
-        <h2 class="section-title">
-          <v-icon icon="mdi-clock-outline" class="mr-2" />
-          Time Slot ({{ formatDate(currentDate) }})
-        </h2>
+        <div class="section-title">
+          <h2 class="title-text">Time Slot</h2>
+          <p class="date-text">{{ formatDate(currentDate) }}</p>
+        </div>
         
         <!-- Date Navigation Controls -->
         <div class="date-navigation">
@@ -487,12 +487,23 @@ onUnmounted(() => {
 }
 
 .section-title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.title-text {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0;
   color: rgb(var(--v-theme-on-surface));
-  display: flex;
-  align-items: center;
+}
+
+.date-text {
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 0.25rem 0 0 0;
+  color: rgb(var(--v-theme-on-surface-variant));
 }
 
 .date-navigation {
@@ -895,7 +906,7 @@ onUnmounted(() => {
     align-items: center;
   }
   
-  .section-title {
+  .title-text {
     font-size: 1.1rem;
   }
   
