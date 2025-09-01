@@ -63,11 +63,9 @@ onUnmounted(() => {
 .alert-max-priority {
   margin-bottom: 0.5rem;
   border-radius: 8px;
-  min-height: auto;
-  height: auto;
-  max-height: 200px;
   width: 100%;
   max-width: none;
+  flex: 0 0 auto;
 }
 
 .alert-max-priority :deep(.v-alert__content) {
