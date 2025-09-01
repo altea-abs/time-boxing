@@ -23,47 +23,95 @@ This is a **Brain Dump & Timeboxing** application built with **Nuxt 4**, **Vue 3
 
 ## State Management Architecture
 
-### Multi-Store System
+### Multi-Store Date-Based System
 
-The application uses specialized Pinia stores that work together:
+The application uses specialized Pinia stores with date-based organization and retention policies:
 
-#### 1. `useTasks.ts` - Task CRUD Operations
-- **Purpose**: Primary task management (create, read, update, delete)
-- **Key Actions**: `addTask(text)`, `removeTask(id)`, `updateTask(id, updates)`
+#### 1. `useTasks.ts` - Date-Based Task CRUD Operations
+- **Purpose**: Primary task management (create, read, update, delete) organized by date
+- **Key Actions**: `addTask(text, dateString?)`, `removeTask(id)`, `updateTask(id, updates)`, `cleanupOldTasks()`
+- **Date Organization**: Tasks stored with `date` field, `tasksForCurrentDate` computed property
 - **Storage**: localStorage key `braindump-tasks`
-- **Returns**: Meaningful booleans for success/failure
+- **Retention**: Automatic cleanup of tasks older than `maxDaysRetention`
+- **Migration**: Backward compatibility with existing task format
 
-#### 2. `usePriorities.ts` - Priority Slot Management  
-- **Purpose**: Manages limited priority slots (configurable 1-10, default 5)
-- **Key Actions**: `add(task)`, `remove(task)`, `removeByIndex(index)`
+#### 2. `usePriorities.ts` - Date-Based Priority Slot Management  
+- **Purpose**: Manages priority slots (1-10, default 5) organized by date
+- **Key Structure**: `prioritiesByDate: Record<string, (Task | null)[]>` instead of single array
+- **Key Actions**: `add(task)`, `remove(task)`, `removeByIndex(index)`, `cleanupOldPriorities()`
 - **Storage**: localStorage key `braindump-priorities`
-- **Business Logic**: Handles max priority limits, validation, alerts
-- **Reactive Arrays**: Automatically resizes when maxPriorities changes
+- **Retention**: Automatic cleanup of priority data older than retention period
+- **Migration**: Automatic conversion from old single-array format to date-based format
 
-#### 3. `useTimeSlots.ts` - Time Grid Management
-- **Purpose**: Dynamic time slot generation and task assignment
-- **Key Actions**: `generateSlotsForDate()`, `assignTaskToSlot()`, `regenerateCurrentSlots()`
+#### 3. `useTimeSlots.ts` - Multi-Day Time Grid Management
+- **Purpose**: Dynamic time slot generation with multi-day navigation and blocked slots
+- **Navigation Actions**: `goToPreviousDay()`, `goToNextDay()`, `goToToday()`
+- **Key Actions**: `generateSlotsForDate(date)`, `assignTaskToSlot()`, `cleanupOldSlots()`
+- **Blocked Slots Integration**: Automatically respects configured recurring activities
 - **Storage**: localStorage key `braindump-timeslots`
-- **Features**: Multi-assignment support, drag & drop, statistics
+- **Retention Coordination**: Triggers cleanup for all stores when generating slots
 
-#### 4. `useSettings.ts` - Configuration Management
-- **Purpose**: Dynamic override of runtime configuration
-- **Key Actions**: `updateMaxPriorities()`, `updateTimeGrid()`, `resetToDefaults()`
+#### 4. `useNotes.ts` - Daily Notes with Date Organization
+- **Purpose**: Manage daily notes organized by date with retention policy  
+- **Key Structure**: `notesByDate: Record<string, DailyNotes>`, `currentNotes` computed
+- **Key Actions**: `updateNotes(content, dateString?)`, `clearNotes()`, `cleanupOldNotes()`
+- **Storage**: localStorage key `braindump-notes-by-date`
+- **Migration**: Automatic migration from old `braindump-notes` to date-based format
+- **Retention**: Cleanup notes older than retention period
+
+#### 5. `useSettings.ts` - Configuration Management + Blocked Slots
+- **Purpose**: Dynamic configuration override + blocked slots management
+- **Configuration Actions**: `updateMaxPriorities()`, `updateTimeGrid()`, `resetToDefaults()`
+- **Blocked Slots Actions**: `addBlockedSlot()`, `updateBlockedSlot()`, `removeBlockedSlot()`, `toggleBlockedSlot()`
+- **Conflict Detection**: `isTimeSlotBlocked()`, `getBlockingActivity()` for time overlap detection
 - **Storage**: localStorage key `braindump-settings`
 - **Features**: Real-time updates, multi-tab sync, fallback to .env defaults
 
 ### Store Interaction Pattern
-Components orchestrate both stores for priority management:
+Components orchestrate multiple stores for comprehensive data management:
 
 ```typescript
 const tasksStore = useTasksStore()
 const prioritiesStore = usePrioritiesStore()
+const notesStore = useNotesStore()
+const timeSlotsStore = useTimeSlotsStore()
 
-// Adding a priority requires both stores
-const newTask = tasksStore.addTask(text)
+// Adding a priority requires both stores with date context
+const newTask = tasksStore.addTask(text) // Auto-assigns current date
 const success = prioritiesStore.add(newTask)
 if (success) {
   tasksStore.updateTask(newTask.id, { isPriority: true })
+}
+
+// Date navigation triggers coordinated cleanup
+timeSlotsStore.goToNextDay() // Triggers cleanup across all stores
+
+// Notes automatically organize by current date
+const currentNotes = notesStore.currentNotes // Auto-gets today's notes
+```
+
+### Retention System Architecture
+
+The application implements a coordinated retention system across all data types:
+
+```typescript
+// Triggered during time slot generation (most common entry point)
+const generateSlotsForDate = (date: Date): void => {
+  // Cleanup all stores in coordinated fashion
+  cleanupOldSlots()
+  tasksStore.cleanupOldTasks()
+  prioritiesStore.cleanupOldPriorities()
+  notesStore.cleanupOldNotes()
+}
+
+// All cleanup functions follow same pattern
+const cleanupOld[DataType] = (): void => {
+  const maxDays = config.public.maxDaysRetention || 7
+  const cutoffDateString = getCutoffDate(maxDays)
+  
+  // Remove data older than cutoff
+  // Log cleanup results
+  // Save updated data
 }
 ```
 
@@ -71,7 +119,7 @@ if (success) {
 
 ### Runtime Configuration Flow
 ```
-.env → nuxt.config.ts → useSettings → [usePriorities, useTimeSlots] → Components
+.env → nuxt.config.ts → useSettings → [usePriorities, useTimeSlots, useTasks, useNotes] → Components
 ```
 
 **Environment Variables** (`.env`):
@@ -81,6 +129,7 @@ if (success) {
 - `NUXT_DEFAULT_START_HOUR=9` (6-22 range, default 9)
 - `NUXT_DEFAULT_END_HOUR=18` (6-22 range, default 18)  
 - `NUXT_DEFAULT_SLOT_DURATION=30` (15/30/45/60min, default 30)
+- `NUXT_MAX_DAYS_RETENTION=7` (retention period for all data types)
 
 **Configuration Rules**:
 - Components NEVER access `useRuntimeConfig()` directly
@@ -115,39 +164,52 @@ app.vue (with Alt+S settings shortcut and modern header)
     ├── SettingsDialog.vue (Responsive 2-column layout)
     ├── SettingsPriority.vue (Slider 1-10 with +/- buttons)
     ├── SettingsTimeRange.vue (Start/end hour selects)
-    └── SettingsSlotDuration.vue (15/30/45/60min select)
+    ├── SettingsSlotDuration.vue (15/30/45/60min select)
+    └── SettingsBlockedSlots.vue (CRUD interface for recurring activities)
 ```
 
 ### Communication Patterns
-- **BrainDumpSection** orchestrates store interactions
+- **BrainDumpSection** orchestrates task/priority store interactions with date context
+- **TimeSlotSection** handles navigation and blocked slots integration
+- **NotesSection** uses reactive computed properties for seamless date-based note management
 - Components use `storeToRefs()` for reactive store values
 - Event emission for parent-child communication
-- Cross-store synchronization via boolean return values
+- Cross-store synchronization via boolean return values and coordinated cleanup
 
 ## TypeScript Organization
 
 ### Interface Structure (`/app/types/`)
-- `/task.ts` - Core Task interface and CRUD types
+- `/task.ts` - Core Task interface with date support and CRUD types
+- `/notes.ts` - DailyNotes interface, CreateNotesInput, UpdateNotesInput, NotesStats
+- `/timeslots.ts` - TimeSlot interfaces, BlockedSlot interfaces, timeboxing features
 - `/components.ts` - Component props, emits, events
 - `/store.ts` - Store state and action interfaces  
-- `/timeslots.ts` - Future timeboxing features
-- `/index.ts` - Central export hub
+- `/index.ts` - Central export hub for all type definitions
 
 **Import Pattern**:
 ```typescript
 // ✅ Preferred
-import type { Task, BrainDumpEmits } from '~/types'
+import type { Task, DailyNotes, BlockedSlot, BrainDumpEmits } from '~/types'
 
 // ❌ Avoid direct file imports
 ```
 
 ## Persistence & Multi-Tab Sync
 
-Both stores implement:
+All stores implement consistent patterns:
 - **LocalStorage persistence** with automatic save on mutations
-- **Multi-tab synchronization** via storage event listeners
-- **Error handling** with fallback to empty arrays
-- **Date object restoration** during JSON parsing
+- **Multi-tab synchronization** via storage event listeners  
+- **Date object restoration** during JSON parsing (createdAt, updatedAt fields)
+- **Migration handling** for backward compatibility when data structures evolve
+- **Error handling** with fallback to empty objects/arrays
+- **Coordinated cleanup** across all data types based on retention policy
+
+### LocalStorage Keys Used:
+- `braindump-tasks` - Task data with date organization
+- `braindump-priorities` - Priority data organized by date
+- `braindump-timeslots` - Time slot data with multi-day support
+- `braindump-notes-by-date` - Notes organized by date (migrated from `braindump-notes`)
+- `braindump-settings` - Settings and blocked slots configuration
 
 ## Key Development Patterns
 
@@ -175,18 +237,19 @@ store.priorities[0] = newTask
 
 ## Current Implementation Status
 
-- ✅ Task management with CRUD operations
-- ✅ Priority system with configurable limits (1-10, reactive)
-- ✅ Runtime configuration via .env files + dynamic settings panel
-- ✅ LocalStorage persistence with multi-tab sync (4 stores)
-- ✅ Vuetify Material Design integration with modern header
-- ✅ Complete TypeScript type system
-- ✅ Time slots system with dynamic grid generation
-- ✅ Settings panel with real-time preview and validation
-- ✅ Keyboard shortcuts (Alt+S for settings, Esc to close)
-- ✅ Responsive design (2-column on desktop, single on mobile)
-- ✅ Daily notes section replacing task assignments
-- ✅ Drag & drop with priority synchronization in time slots
+- ✅ **Date-based task management** with CRUD operations and retention policy
+- ✅ **Date-based priority system** with configurable limits (1-10, reactive) and automatic cleanup
+- ✅ **Multi-day time slots navigation** with Previous/Next/Today controls
+- ✅ **Blocked slots system** for recurring activities (meetings, lunch, etc.) with conflict detection
+- ✅ **Date-organized notes** with automatic migration and retention cleanup
+- ✅ **Coordinated retention system** across all data types (configurable via NUXT_MAX_DAYS_RETENTION)
+- ✅ **Runtime configuration** via .env files + dynamic settings panel with blocked slots management
+- ✅ **LocalStorage persistence** with multi-tab sync (5 stores) and backward compatibility
+- ✅ **Complete TypeScript system** with date-based interfaces and blocked slot types
+- ✅ **Settings panel** with blocked slots CRUD interface, real-time preview and validation
+- ✅ **Vuetify Material Design** integration with modern header and responsive design
+- ✅ **Keyboard shortcuts** (Alt+S for settings, Esc to close, Ctrl+Drag for multi-assignment)
+- ✅ **Responsive design** (2-column on desktop, single on mobile) with blocked slots integration
 
 ## Keyboard Shortcuts & User Interactions
 
@@ -214,8 +277,15 @@ store.priorities[0] = newTask
 - **Entire Slot Draggable**: Fixed issue where users selected text instead of dragging
 - **Priority Sync**: Tasks dragged to time slots maintain priority status with star indicator
 - **Multi-slot Support**: Tasks can be assigned to multiple time slots
+- **Blocked Slot Integration**: Drag & drop respects blocked slots with visual feedback
 
-The architecture provides clear separation of concerns, type safety, and reactive configuration management suitable for a productivity/timeboxing application.
+### Data Migration & Backward Compatibility
+- **Automatic migrations** when upgrading from single-data to date-based organization
+- **Graceful fallbacks** for missing date fields in existing data
+- **Preservation of existing data** during schema upgrades
+- **Logging** of migration and cleanup operations for debugging
+
+The architecture provides clear separation of concerns, type safety, reactive configuration management, and comprehensive data organization suitable for a productivity/timeboxing application with multi-day support and automatic data retention.
 
 ## Git Commit Guidelines
 

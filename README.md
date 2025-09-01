@@ -25,26 +25,34 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 - **Cattura rapida** di tutti i tuoi pensieri e task
 - **Sistema di priorità** configurabile (1-10 priorità, default 5)
 - **Drag & Drop** intuitivo per riorganizzare
+- **Organizzazione per data** - tasks e priorità organizzati per giorno
 - **Persistenza automatica** con sincronizzazione multi-tab
-- **Sezione Note** per riflessioni giornaliere e promemoria
+- **Sistema di retention** configurabile per cleanup automatico dati vecchi
+- **Sezione Note** per riflessioni giornaliere con organizzazione per data
 
 ### ⏰ **Time Slots**
 - **Griglia temporale personalizzabile** (orari di lavoro, durata slot)
-- **Assegnazione flessibile** task → slot temporali
+- **Navigazione multi-giorno** con frecce precedente/successivo e pulsante "Today"
+- **Slot bloccati** configurabili per attività ricorrenti (riunioni, pranzo, ecc.)
+- **Assegnazione flessibile** task → slot temporali con visualizzazione attività bloccate
 - **Multi-Assignment** con due modalità:
   - 🔘 **Toggle Button**: Click per attivare/disattivare
   - ⌨️ **Ctrl+Drag**: Tieni Ctrl durante il drag per selezione multipla
 - **Slot adiacenti intelligenti** - espandi automaticamente task vicini
+- **Sistema di retention** - dati vecchi rimossi automaticamente dopo N giorni
 
 ### 📊 **Dashboard & Statistiche**
-- **Statistiche in tempo reale** (slot totali, occupati, priorità)
+- **Statistiche in tempo reale** (slot totali, occupati, priorità, slot bloccati)
 - **Visualizzazione task assegnati** con raggruppamento per attività
 - **Contatori dinamici** tempo programmato e priorità
+- **Statistiche note** (giorni totali, caratteri, lunghezza media)
 
 ### ⚙️ **Pannello Impostazioni**
 - **Configurazione dinamica** numero priorità (1-10)
 - **Orari di lavoro personalizzabili** (inizio/fine giornata)
 - **Durata slot configurabile** (15/30/45/60 minuti)
+- **Gestione slot bloccati** - crea, modifica, elimina attività ricorrenti
+- **Configurazione retention** - imposta giorni di mantenimento dati
 - **Anteprima in tempo reale** delle modifiche
 - **Shortcut keyboard**: `Alt+S` per aprire, `Esc` per chiudere
 
@@ -83,43 +91,56 @@ app/
 │       ├── SettingsTimeRange.vue
 │       └── SettingsSlotDuration.vue
 ├── stores/              # Pinia stores per state management
-│   ├── useTasks.ts      # CRUD operazioni task
-│   ├── usePriorities.ts # Gestione priorità (1-10 slot)
-│   ├── useTimeSlots.ts  # Gestione time slots e assegnazioni
-│   └── useSettings.ts   # Configurazione dinamica applicazione
+│   ├── useTasks.ts      # CRUD operazioni task con organizzazione per data
+│   ├── usePriorities.ts # Gestione priorità (1-10 slot) per data
+│   ├── useTimeSlots.ts  # Gestione time slots, assegnazioni e navigazione multi-giorno
+│   ├── useNotes.ts      # Gestione note giornaliere con retention
+│   └── useSettings.ts   # Configurazione dinamica e gestione slot bloccati
 ├── types/               # Definizioni TypeScript
-│   ├── task.ts
+│   ├── task.ts          # Interfacce task con supporto date
+│   ├── notes.ts         # Interfacce note giornaliere
+│   ├── timeslots.ts     # Interfacce time slots e slot bloccati
 │   ├── components.ts
-│   ├── store.ts
-│   └── timeslots.ts
+│   └── store.ts
 ├── plugins/             # Plugin Nuxt
 │   └── vuetify.client.ts
 └── app.vue             # Componente root
 ```
 
-### 🏪 Sistema di Store Duale
+### 🏪 Sistema Multi-Store Specializzato
 
-L'applicazione utilizza un'architettura di store specializzati:
+L'applicazione utilizza un'architettura di store specializzati con organizzazione per data:
 
-#### 1. **`useTasks.ts`** - Operazioni CRUD
+#### 1. **`useTasks.ts`** - Operazioni CRUD Task
 - Gestione primaria dei task (create, read, update, delete)
+- **Organizzazione per data**: `tasksForCurrentDate` computed property
+- **Sistema retention**: cleanup automatico task vecchi
 - Persistenza localStorage con chiave `braindump-tasks`
-- Ritorna booleani per successo/fallimento operazioni
 
-#### 2. **`usePriorities.ts`** - Gestione Slot Priorità
-- Gestione slot di priorità limitati (configurabili 1-10)
-- Logica di business per limiti massimi e validazione
+#### 2. **`usePriorities.ts`** - Gestione Slot Priorità per Data
+- Gestione slot priorità organizzati per data (`prioritiesByDate`)
+- **Retention system**: cleanup priorità vecchie automatico
+- Migrazione automatica da formato singolo a formato per data
 - Alerts automatici quando si raggiunge il limite
 
-#### 3. **`useTimeSlots.ts`** - Timeboxing
-- Generazione dinamica slot temporali
+#### 3. **`useTimeSlots.ts`** - Timeboxing Multi-Giorno
+- Generazione dinamica slot temporali con navigazione giorni
+- **Navigazione multi-giorno**: `goToPreviousDay`, `goToNextDay`, `goToToday`
+- **Integrazione slot bloccati**: rispetta attività ricorrenti configurate
+- **Sistema retention**: cleanup coordinato di tutti i store
 - Assegnazione task → slot con supporto multi-assignment
-- Statistiche in tempo reale e visualizzazioni
 
-#### 4. **`useSettings.ts`** - Configurazione Dinamica
+#### 4. **`useNotes.ts`** - Note Giornaliere
+- **Organizzazione per data**: `notesByDate` con computed `currentNotes`
+- **Migrazione automatica**: da formato singolo a organizzazione per data
+- **Sistema retention**: cleanup note vecchie automatico
+- Persistenza localStorage con chiave `braindump-notes-by-date`
+
+#### 5. **`useSettings.ts`** - Configurazione Dinamica e Slot Bloccati
 - Override runtime dei valori di configurazione
+- **Gestione slot bloccati**: CRUD per attività ricorrenti
+- **Rilevamento conflitti**: `isTimeSlotBlocked`, `getBlockingActivity`  
 - Persistenza localStorage delle impostazioni personalizzate
-- Reattività completa per aggiornamenti in tempo reale
 
 ### ⚙️ Sistema di Configurazione
 
@@ -131,6 +152,7 @@ NUXT_AUTO_SAVE_ENABLED=true        # Auto-save attivo
 NUXT_DEFAULT_START_HOUR=9          # Orario inizio giornata
 NUXT_DEFAULT_END_HOUR=18           # Orario fine giornata
 NUXT_DEFAULT_SLOT_DURATION=30      # Durata slot in minuti
+NUXT_MAX_DAYS_RETENTION=7          # Giorni retention per cleanup automatico
 ```
 
 **Flusso di configurazione**: `.env` → `nuxt.config.ts` → `useSettings` → Stores → Componenti
@@ -180,22 +202,31 @@ npm run typecheck    # Controllo tipi TypeScript
 - Drag & drop per riorganizzare
 - Alert automatico al raggiungimento limite
 
-### 3. **Time Slots - Pianificazione**
+### 3. **Time Slots - Pianificazione Multi-Giorno**
 - Griglia oraria personalizzabile (default 9:00-18:00, slot 30min)
-- **Assegnazione Singola**: Drag task → slot
+- **Navigazione giorni**: Usa frecce ← → o pulsante "Today" per cambiare data
+- **Slot bloccati**: Visualizza automaticamente attività ricorrenti configurate
+- **Assegnazione Singola**: Drag task → slot disponibile
 - **Multi-Assignment**: 
   - 🔘 Attiva toggle "Multi-Assign" → drag attraverso più slot
   - ⌨️ Tieni `Ctrl` + drag attraverso slot multipli
 
-### 4. **Note Giornaliere**
-- Sezione dedicata per riflessioni e promemoria quotidiani
-- Persistenza automatica con localStorage
+### 4. **Note Giornaliere per Data**
+- Sezione dedicata per riflessioni e promemoria organizzate per giorno
+- **Auto-organizzazione**: Note automaticamente associate al giorno corrente
+- **Migrazione automatica**: Note esistenti migrate al nuovo sistema
+- Persistenza automatica con localStorage e cleanup automatico dati vecchi
 - Funzioni copia/cancella per gestione veloce
 
 ### 5. **Pannello Impostazioni** (`Alt+S`)
 - **Priorità**: Configura numero massimo (1-10)
 - **Orari**: Personalizza inizio/fine giornata lavorativa  
 - **Slot**: Scegli durata (15/30/45/60 minuti)
+- **Slot Bloccati**: Gestisci attività ricorrenti (riunioni, pranzi, ecc.)
+  - Crea slot con titolo, orario, giorni della settimana, colore
+  - Modifica/elimina slot esistenti
+  - Abilita/disabilita slot temporaneamente
+- **Retention**: Configura giorni di mantenimento dati (predefinito da .env)
 - **Anteprima**: Visualizza statistiche aggiornate in tempo reale
 - **Layout responsivo**: Due colonne su desktop, singola su mobile
 
