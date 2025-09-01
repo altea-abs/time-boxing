@@ -50,7 +50,7 @@
     </v-app-bar>
     
     <!-- Settings Dialog -->
-    <SettingsSettingsDialog v-model="showSettings" />
+    <SettingsDialog v-model="showSettings" />
     
     <!-- Help Dialog -->
     <HelpDialog v-model="showHelp" />
