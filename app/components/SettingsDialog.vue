@@ -109,37 +109,34 @@
               Orari di Lavoro
             </h3>
             
-            <div class="setting-item">
+            <div class="setting-item setting-item--stacked">
               <div class="setting-label">
-                <div class="setting-name">Orario di inizio</div>
-                <div class="setting-description">Quando inizia la tua giornata lavorativa</div>
+                <div class="setting-name">Orario di inizio e fine</div>
+                <div class="setting-description">Quando inizia e finisce la tua giornata lavorativa</div>
               </div>
-              <div class="setting-control">
-                <v-select
-                  v-model="localStartHour"
-                  :items="hourOptions"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  class="hour-select"
-                />
-              </div>
-            </div>
-
-            <div class="setting-item">
-              <div class="setting-label">
-                <div class="setting-name">Orario di fine</div>
-                <div class="setting-description">Quando finisce la tua giornata lavorativa</div>
-              </div>
-              <div class="setting-control">
-                <v-select
-                  v-model="localEndHour"
-                  :items="hourOptions.filter(h => h.value > localStartHour)"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  class="hour-select"
-                />
+              <div class="time-controls">
+                <div class="time-control-group">
+                  <label class="time-label">Inizio</label>
+                  <v-select
+                    v-model="localStartHour"
+                    :items="hourOptions"
+                    variant="outlined"
+                    density="compact"
+                    hide-details
+                    class="hour-select"
+                  />
+                </div>
+                <div class="time-control-group">
+                  <label class="time-label">Fine</label>
+                  <v-select
+                    v-model="localEndHour"
+                    :items="hourOptions.filter(h => h.value > localStartHour)"
+                    variant="outlined"
+                    density="compact"
+                    hide-details
+                    class="hour-select"
+                  />
+                </div>
               </div>
             </div>
 
@@ -418,6 +415,35 @@ const close = () => {
   min-width: 200px;
 }
 
+.setting-item--stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.setting-item--stacked .setting-label {
+  flex: none;
+}
+
+.time-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+.time-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.time-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
 .priority-slider {
   margin-bottom: 1rem;
 }
@@ -505,6 +531,15 @@ const close = () => {
   
   .priority-chips {
     justify-content: center;
+  }
+  
+  .time-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .time-control-group {
+    min-width: unset;
   }
 }
 </style>
