@@ -1,16 +1,14 @@
 <template>
   <v-alert
     v-if="visible"
-    type="error"
-    color="error"
+    type="warning"
+    color="warning"
     closable
     @click:close="handleClose"
     class="alert-max-priority"
+    density="compact"
   >
-    <template #title>
-      <strong>Attenzione!</strong>
-    </template>
-    Puoi selezionare massimo {{ maxPriorities }} priorità!
+    Massimo {{ maxPriorities }} priorità selezionabili!
   </v-alert>
 </template>
 
@@ -68,9 +66,17 @@ onUnmounted(() => {
 
 .alert-max-priority :deep(.v-alert__content) {
   font-weight: 500;
+  font-size: 0.9rem;
 }
 
-.alert-max-priority :deep(.v-alert__title) {
-  margin-bottom: 0.25rem;
+.alert-max-priority :deep(.v-alert__close .v-btn) {
+  color: rgb(var(--v-theme-on-surface-variant)) !important;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.alert-max-priority :deep(.v-alert__close .v-btn:hover) {
+  color: rgb(var(--v-theme-on-surface)) !important;
+  opacity: 1;
 }
 </style>
