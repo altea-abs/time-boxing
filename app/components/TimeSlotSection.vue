@@ -2,36 +2,38 @@
   <div class="time-slot-section">
     <!-- Header con statistiche -->
     <div class="section-header">
-      <div class="title-with-navigation">
-        <div class="section-title">
-          <h2 class="title-text">Time Slot</h2>
-          <p class="date-text">{{ formatDate(currentDate) }}</p>
-        </div>
+      <div class="title-section">
+        <h2 class="title-text">Time Slot</h2>
         
-        <!-- Date Navigation Controls -->
-        <div class="date-navigation">
+        <!-- Date with Navigation Controls -->
+        <div class="date-with-navigation">
           <v-btn
             icon="mdi-chevron-left"
             variant="text"
             size="small"
             @click="goToPreviousDay"
             title="Giorno precedente"
+            class="nav-btn"
           />
-          <v-btn
-            variant="outlined"
-            size="small"
-            @click="goToToday"
-            :disabled="isToday"
-            class="today-btn"
-          >
-            Oggi
-          </v-btn>
+          <div class="date-container">
+            <p class="date-text">{{ formatDate(currentDate) }}</p>
+            <v-btn
+              variant="outlined"
+              size="x-small"
+              @click="goToToday"
+              :disabled="isToday"
+              class="today-btn"
+            >
+              Oggi
+            </v-btn>
+          </div>
           <v-btn
             icon="mdi-chevron-right"
             variant="text"
             size="small"
             @click="goToNextDay"
             title="Giorno successivo"
+            class="nav-btn"
           />
         </div>
       </div>
@@ -479,37 +481,43 @@ onUnmounted(() => {
   margin-bottom: 1.5rem;
 }
 
-.title-with-navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.title-section {
   margin-bottom: 0.75rem;
-}
-
-.section-title {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  text-align: center;
 }
 
 .title-text {
   font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 0;
+  margin-bottom: 0.5rem;
   color: rgb(var(--v-theme-on-surface));
+}
+
+.date-with-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.date-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 200px;
 }
 
 .date-text {
   font-size: 0.875rem;
   font-weight: 400;
-  margin: 0.25rem 0 0 0;
+  margin: 0;
   color: rgb(var(--v-theme-on-surface-variant));
+  text-align: center;
 }
 
-.date-navigation {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.nav-btn {
+  flex-shrink: 0;
 }
 
 .today-btn {
@@ -900,18 +908,16 @@ onUnmounted(() => {
     justify-content: center;
   }
   
-  .title-with-navigation {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-  
   .title-text {
     font-size: 1.1rem;
   }
   
-  .date-navigation {
-    justify-content: center;
+  .date-container {
+    min-width: 180px;
+  }
+  
+  .date-with-navigation {
+    gap: 0.25rem;
   }
 }
 </style>
