@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isVisible" max-width="800" max-height="90vh" @keydown.esc="close">
+  <v-dialog v-model="isVisible" max-width="800" max-height="90vh" @keydown.esc="close" @keydown="handleKeydown">
     <v-card class="help-dialog d-flex flex-column" style="height: 90vh;">
       <v-card-title class="d-flex align-center px-6 py-4 flex-shrink-0">
         <v-icon icon="mdi-help-circle" class="mr-2" color="primary" />
@@ -147,6 +147,20 @@ const close = () => {
   // Reset to first step for next time
   currentStep.value = 1
   emit('update:modelValue', false)
+}
+
+// Handle keyboard navigation
+const handleKeydown = (event: KeyboardEvent) => {
+  switch (event.key) {
+    case 'ArrowLeft':
+      event.preventDefault()
+      previousStep()
+      break
+    case 'ArrowRight':
+      event.preventDefault()
+      nextStep()
+      break
+  }
 }
 
 // Reset step when dialog opens
