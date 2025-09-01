@@ -1,6 +1,6 @@
 <template>
-  <v-dialog v-model="isVisible" max-width="800" max-height="90vh" @keydown.esc="close" @keydown="handleKeydown">
-    <v-card class="help-dialog d-flex flex-column" style="height: 90vh;">
+  <v-dialog v-model="isVisible" max-width="800" max-height="80vh" @keydown.esc="close" @keydown="handleKeydown">
+    <v-card class="help-dialog d-flex flex-column" style="height: 80vh;">
       <v-card-title class="d-flex align-center px-6 py-4 flex-shrink-0">
         <v-icon icon="mdi-help-circle" class="mr-2" color="primary" />
         Guida Interattiva
@@ -174,7 +174,7 @@ watch(isVisible, (newValue) => {
 <style scoped>
 .help-dialog {
   overflow: hidden;
-  max-height: 90vh;
+  max-height: 80vh;
 }
 
 .help-stepper {
@@ -211,7 +211,7 @@ watch(isVisible, (newValue) => {
 :deep(.v-stepper-window) {
   margin: 0;
   padding: 0;
-  height: 400px;
+  height: calc(80vh - 200px);
   overflow-y: auto;
 }
 
@@ -243,7 +243,7 @@ watch(isVisible, (newValue) => {
   }
   
   :deep(.v-stepper-window) {
-    height: 300px;
+    height: calc(80vh - 160px);
   }
 }
 </style>
