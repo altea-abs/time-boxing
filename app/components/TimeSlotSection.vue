@@ -72,6 +72,9 @@
           'time-slot--adjacent-available': availableAdjacentSlots.includes(slot.id) && draggedTaskId,
           'time-slot--multi-assign-touched': touchedSlots.has(slot.id) && isEffectiveMultiAssignMode
         }"
+        :draggable="slot.task ? 'true' : 'false'"
+        @dragstart="slot.task ? handleTaskDragStart($event, slot.task) : undefined"
+        @dragend="slot.task ? handleTaskDragEnd : undefined"
         @dragover.prevent="handleDragOver($event, slot)"
         @dragenter="handleDragEnter($event, slot)"
         @dragleave="handleDragLeave($event, slot)"
@@ -79,7 +82,7 @@
         @click="handleSlotClick(slot)"
       >
         <!-- Time header -->
-        <div class="time-slot__header">
+        <div class="time-slot__header" :style="{ pointerEvents: 'auto' }">
           <span class="time-slot__time">{{ slot.startTime }}</span>
           <v-btn
             v-if="slot.task"
@@ -94,9 +97,6 @@
         <div 
           v-if="slot.task" 
           class="time-slot__content"
-          draggable="true"
-          @dragstart="handleTaskDragStart($event, slot.task)"
-          @dragend="handleTaskDragEnd"
         >
           <div class="task-title">{{ slot.task.text }}</div>
           <div v-if="slot.task.isPriority" class="priority-badge">
@@ -681,17 +681,21 @@ onUnmounted(() => {
 
 .time-slot__content {
   position: relative;
-  cursor: grab;
   user-select: none;
   transition: transform 0.2s ease;
+  pointer-events: none; /* Prevent child elements from interfering with drag */
 }
 
-.time-slot__content:hover {
-  transform: translateY(-1px);
+.time-slot--occupied {
+  cursor: grab;
 }
 
-.time-slot__content:active {
+.time-slot--occupied:active {
   cursor: grabbing;
+}
+
+.time-slot--occupied:hover .time-slot__content {
+  transform: translateY(-1px);
 }
 
 .drag-indicator-slot {
@@ -702,7 +706,7 @@ onUnmounted(() => {
   transition: opacity 0.2s ease;
 }
 
-.time-slot__content:hover .drag-indicator-slot {
+.time-slot--occupied:hover .drag-indicator-slot {
   opacity: 0.6;
 }
 
