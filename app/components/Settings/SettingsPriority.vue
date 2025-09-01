@@ -38,41 +38,6 @@
           />
         </template>
       </v-slider>
-      
-      <div class="priority-preview">
-        <div class="priority-chips">
-          <v-chip
-            v-for="n in maxPriorities"
-            :key="n"
-            size="small"
-            color="primary"
-            variant="outlined"
-            class="priority-chip"
-          >
-            {{ n }}
-          </v-chip>
-          <div v-if="maxPriorities < 10" class="disabled-chips">
-            <v-chip
-              v-for="n in (10 - maxPriorities)"
-              :key="n + maxPriorities"
-              size="small"
-              color="grey"
-              variant="outlined"
-              disabled
-              class="priority-chip"
-            >
-              {{ n + maxPriorities }}
-            </v-chip>
-          </div>
-        </div>
-        <div class="priority-info">
-          <v-icon icon="mdi-information" size="small" color="info" class="mr-1" />
-          <span class="info-text">
-            Potrai selezionare fino a <strong>{{ maxPriorities }}</strong> 
-            task come priorità per la giornata
-          </span>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -142,56 +107,11 @@ const decrementPriorities = () => {
 
 .priority-control {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.priority-slider {
-  margin-bottom: 0.5rem;
-}
-
-.priority-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.priority-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
   justify-content: center;
 }
 
-.priority-chip {
-  min-width: 32px;
-}
-
-.disabled-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  opacity: 0.4;
-}
-
-.priority-info {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  background: rgba(var(--v-theme-info), 0.1);
-  border-radius: 6px;
-  border-left: 3px solid rgb(var(--v-theme-info));
-}
-
-.info-text {
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
-
-@media (max-width: 600px) {
-  .priority-chips {
-    justify-content: center;
-  }
+.priority-slider {
+  min-width: 200px;
+  max-width: 300px;
 }
 </style>
