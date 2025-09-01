@@ -24,6 +24,13 @@
       <template #append>
         <div class="header-actions">
           <v-btn
+            icon="mdi-cog"
+            variant="text"
+            size="default"
+            @click="showSettings = !showSettings"
+            title="Impostazioni"
+          />
+          <v-btn
             icon="mdi-github"
             variant="text"
             size="default"
@@ -42,6 +49,9 @@
       </template>
     </v-app-bar>
     
+    <!-- Settings Dialog -->
+    <SettingsDialog v-model="showSettings" />
+    
     <!-- Help Dialog -->
     <HelpDialog v-model="showHelp" />
     <v-main>
@@ -59,6 +69,7 @@
 
 <script setup>
 const showHelp = ref(false)
+const showSettings = ref(false)
 
 const handlePriorityToggled = (task) => {
   console.log('Priority toggled for task:', task)

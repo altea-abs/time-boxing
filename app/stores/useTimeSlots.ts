@@ -4,7 +4,11 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   // Get runtime config directly
   const config = useRuntimeConfig()
   
-  // Default time grid configuration
+  // Get settings from settings store
+  const settingsStore = useSettingsStore()
+  const { startHour, endHour, slotDuration } = storeToRefs(settingsStore)
+  
+  // Default time grid configuration (using settings store values)
   const defaultGridConfig: TimeGridConfig = {
     startHour: 9, // 9:00
     endHour: 18, // 18:00
@@ -12,10 +16,17 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     includedDays: [1, 2, 3, 4, 5] // Lun-Ven
   }
   
+  // Dynamic grid config that updates with settings
+  const gridConfig = computed((): TimeGridConfig => ({
+    startHour: startHour.value,
+    endHour: endHour.value,
+    slotDuration: slotDuration.value,
+    includedDays: [1, 2, 3, 4, 5]
+  }))
+  
   // State
   const timeSlots = ref<TimeSlot[]>([])
   const currentDate = ref(new Date())
-  const gridConfig = ref<TimeGridConfig>(defaultGridConfig)
   
   // Getters
   const todaySlots = computed(() => {
@@ -107,18 +118,18 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
     }
     
     const newSlots: TimeSlot[] = []
-    const { startHour, endHour, slotDuration } = gridConfig.value
+    const { startHour: configStartHour, endHour: configEndHour, slotDuration: configSlotDuration } = gridConfig.value
     
-    for (let hour = startHour; hour < endHour; hour++) {
-      for (let minute = 0; minute < 60; minute += slotDuration) {
+    for (let hour = configStartHour; hour < configEndHour; hour++) {
+      for (let minute = 0; minute < 60; minute += configSlotDuration) {
         const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-        const endMinute = minute + slotDuration
+        const endMinute = minute + configSlotDuration
         const actualEndHour = endMinute >= 60 ? hour + 1 : hour
         const actualEndMinute = endMinute >= 60 ? endMinute - 60 : endMinute
         const endTime = `${actualEndHour.toString().padStart(2, '0')}:${actualEndMinute.toString().padStart(2, '0')}`
         
         // Fix the logic error and ensure we don't go past the end hour
-        if (actualEndHour <= endHour) {
+        if (actualEndHour <= configEndHour) {
           newSlots.push({
             id: `${dateString}-${startTime}`,
             startTime,

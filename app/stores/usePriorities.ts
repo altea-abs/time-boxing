@@ -4,12 +4,9 @@ export const usePrioritiesStore = defineStore('priorities', () => {
   // Get runtime config directly
   const config = useRuntimeConfig()
   
-  // Configuration values with validation
-  const maxPriorities = computed(() => {
-    const value = config.public.maxPriorities
-    // Validazione: minimo 1, massimo 10
-    return Math.max(1, Math.min(10, value))
-  })
+  // Get max priorities from settings store (allows dynamic updates)
+  const settingsStore = useSettingsStore()
+  const { maxPriorities } = storeToRefs(settingsStore)
 
   const alertAutoHideDelay = computed(() => {
     const value = config.public.alertAutoHideDelay
