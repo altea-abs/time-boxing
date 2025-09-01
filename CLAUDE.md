@@ -158,15 +158,20 @@ The architecture provides clear separation of concerns, type safety, and reactiv
 
 ## Git Commit Guidelines
 
-This project uses **Conventional Commits** for standardized commit messages. When creating commits, always follow this format:
+This project uses **Conventional Commits** for standardized commit messages. 
+
+### IMPORTANT: Automatic Commits Required
+**Claude MUST commit changes automatically after completing any coding task using Conventional Commits format.** Never ask the user to commit - always commit immediately after making changes.
 
 ### Commit Message Format
 ```
 <type>[optional scope]: <description>
 
-[optional body]
+[optional body - max 100 chars per line]
 
-[optional footer(s)]
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ### Commit Types
@@ -183,25 +188,40 @@ This project uses **Conventional Commits** for standardized commit messages. Whe
 - **revert**: 🗑 Revert previous commit
 - **wip**: 🚧 Work in progress (for development)
 
-### Examples
+### Automatic Commit Process
+1. **Check Status**: Run `git status` and `git diff` to understand changes
+2. **Stage Files**: Add relevant files with `git add`
+3. **Commit**: Use heredoc format with proper line length (max 100 chars)
+4. **Include Footer**: Always add Claude Code attribution footer
+
+### Commit Command Template
 ```bash
-feat(auth): add user authentication system
-fix(ui): resolve mobile responsiveness issue
-docs(readme): update installation instructions
-chore(deps): upgrade dependencies to latest versions
-ci(deploy): add GitHub Pages deployment workflow
+git commit -m "$(cat <<'EOF'
+<type>(<scope>): <description>
+
+<body with details about the changes>
+- Feature 1 implemented
+- Bug 2 fixed
+- Component 3 refactored
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
 ```
 
-### Breaking Changes
-For breaking changes, add `!` after the type/scope and include `BREAKING CHANGE:` in the footer:
+### Examples
 ```bash
-feat(api)!: redesign user authentication API
-
-BREAKING CHANGE: authentication tokens are now JWT instead of session-based
+feat(ui): add modern header with help dialog and animations
+fix(layout): resolve Vuetify layout injection error
+docs(claude): update commit guidelines for automatic commits
+refactor(components): extract HelpDialog into dedicated component
 ```
 
 ### Tools Available
-- `npm run commit` - Interactive commit with Commitizen
-- `git commit` - Regular commit (validated by CommitLint)
+- `npm run commit` - Interactive commit with Commitizen (for manual use)
+- Pre-commit hooks automatically run lint and typecheck
+- CommitLint validates all commit messages
 
-Always use meaningful commit messages that clearly describe the change and its impact.
+**Remember: Always commit automatically - never skip this step!**
