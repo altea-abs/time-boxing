@@ -49,8 +49,8 @@
       </div>
     </div>
 
-    <!-- Sezione Task Assegnati -->
-    <AssignedTasksSection />
+    <!-- Sezione note -->
+    <NotesSection />
   </div>
 </template>
 
