@@ -23,7 +23,7 @@ export const useSettingsStore = defineStore('settings', () => {
   })
   
   const slotDuration = computed(() => {
-    return dynamicSlotDuration.value ?? 30
+    return dynamicSlotDuration.value ?? config.public.defaultSlotDuration
   })
   
   // Actions

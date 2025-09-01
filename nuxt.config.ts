@@ -29,7 +29,8 @@ export default defineNuxtConfig({
       alertAutoHideDelay: parseInt(process.env.NUXT_ALERT_AUTO_HIDE_DELAY || '5000'),
       autoSaveEnabled: process.env.NUXT_AUTO_SAVE_ENABLED !== 'false',
       defaultStartHour: parseInt(process.env.NUXT_DEFAULT_START_HOUR || '9'),
-      defaultEndHour: parseInt(process.env.NUXT_DEFAULT_END_HOUR || '18')
+      defaultEndHour: parseInt(process.env.NUXT_DEFAULT_END_HOUR || '18'),
+      defaultSlotDuration: parseInt(process.env.NUXT_DEFAULT_SLOT_DURATION || '30')
     }
   }
 })
