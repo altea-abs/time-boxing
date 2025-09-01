@@ -80,26 +80,6 @@
           Inizia a usare l'app
         </v-btn>
       </v-card-actions>
-      
-      <div class="quick-actions flex-shrink-0">
-        <v-btn
-          variant="text"
-          size="small"
-          prepend-icon="mdi-github"
-          href="https://github.com/altea-abs/time-boxing"
-          target="_blank"
-        >
-          GitHub
-        </v-btn>
-        <v-btn
-          variant="text"
-          size="small"
-          @click="skipToEnd"
-          prepend-icon="mdi-skip-next"
-        >
-          Salta la guida
-        </v-btn>
-      </div>
     </v-card>
   </v-dialog>
 </template>
@@ -168,9 +148,6 @@ const previousStep = () => {
   }
 }
 
-const skipToEnd = () => {
-  currentStep.value = totalSteps
-}
 
 const close = () => {
   // Reset to first step for next time
@@ -244,14 +221,6 @@ watch(isVisible, (newValue) => {
   text-align: center;
 }
 
-.quick-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  background: rgba(var(--v-theme-surface-variant), 0.3);
-}
 
 @media (max-width: 600px) {
   :deep(.v-stepper-header) {
@@ -274,13 +243,6 @@ watch(isVisible, (newValue) => {
     font-size: 0.8rem;
     padding: 0.25rem 0.75rem;
     min-width: 60px;
-  }
-  
-  .quick-actions {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
   }
 }
 </style>
