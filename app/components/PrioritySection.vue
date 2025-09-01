@@ -6,7 +6,15 @@
         v-for="(priority, index) in priorities"
         :key="index"
         class="priority-slot"
-        :class="{ 'priority-filled': priority !== null }"
+        :class="{ 
+          'priority-filled': priority !== null,
+          'drag-over': dragOverIndex === index,
+          'drag-source': dragSourceIndex === index
+        }"
+        @dragover.prevent="handleDragOver(index)"
+        @dragenter.prevent="handleDragEnter(index)"
+        @dragleave="handleDragLeave"
+        @drop="handleDrop($event, index)"
       >
         <div class="priority-number">{{ index + 1 }}</div>
         <div class="priority-content">
@@ -14,7 +22,8 @@
             v-if="priority" 
             class="priority-task"
             draggable="true"
-            @dragstart="handleDragStart($event, priority)"
+            @dragstart="handleDragStart($event, priority, index)"
+            @dragend="handleDragEnd"
           >
             <div class="priority-task-content">
               <v-icon 
@@ -51,6 +60,10 @@ const emit = defineEmits<PriorityEmits>()
 const prioritiesStore = usePrioritiesStore()
 const { priorities, showMaxAlert, priorityLabelText } = storeToRefs(prioritiesStore)
 
+// Drag and drop state
+const dragSourceIndex = ref<number | null>(null)
+const dragOverIndex = ref<number | null>(null)
+
 const removePriority = (index: number) => {
   const task = priorities.value[index]
   if (task) {
@@ -59,11 +72,57 @@ const removePriority = (index: number) => {
   }
 }
 
-const handleDragStart = (event: DragEvent, task: Task) => {
+const handleDragStart = (event: DragEvent, task: Task, sourceIndex: number) => {
   if (event.dataTransfer) {
+    // Set data for external drops (time slots)
     event.dataTransfer.setData('application/json', JSON.stringify(task))
-    event.dataTransfer.effectAllowed = 'copy'
+    event.dataTransfer.effectAllowed = 'copyMove'
+    
+    // Set source index for internal reordering
+    dragSourceIndex.value = sourceIndex
   }
+}
+
+const handleDragOver = (index: number) => {
+  dragOverIndex.value = index
+}
+
+const handleDragEnter = (index: number) => {
+  dragOverIndex.value = index
+}
+
+const handleDragLeave = () => {
+  // Only clear if we're actually leaving the slots area
+  setTimeout(() => {
+    if (dragOverIndex.value !== null) {
+      const isOverSlot = document.querySelector('.priority-slot:hover')
+      if (!isOverSlot) {
+        dragOverIndex.value = null
+      }
+    }
+  }, 50)
+}
+
+const handleDrop = (event: DragEvent, targetIndex: number) => {
+  event.preventDefault()
+  
+  // Handle internal reordering
+  if (dragSourceIndex.value !== null && dragSourceIndex.value !== targetIndex) {
+    const success = prioritiesStore.reorder(dragSourceIndex.value, targetIndex)
+    if (success) {
+      console.log(`Priority reordered from ${dragSourceIndex.value + 1} to ${targetIndex + 1}`)
+    }
+  }
+  
+  // Reset drag state
+  dragSourceIndex.value = null
+  dragOverIndex.value = null
+}
+
+const handleDragEnd = () => {
+  // Reset drag state
+  dragSourceIndex.value = null
+  dragOverIndex.value = null
 }
 </script>
 
@@ -93,6 +152,18 @@ const handleDragStart = (event: DragEvent, task: Task) => {
   border-radius: 8px;
   padding: 0.75rem;
   transition: all 0.2s ease;
+}
+
+.priority-slot.drag-over {
+  border-color: rgb(var(--v-theme-primary));
+  border-style: solid;
+  background-color: rgba(var(--v-theme-primary), 0.15);
+  transform: scale(1.02);
+}
+
+.priority-slot.drag-source {
+  opacity: 0.5;
+  transform: scale(0.98);
 }
 
 .priority-filled {
