@@ -3,6 +3,7 @@
     v-if="visible"
     type="error"
     color="error"
+    variant="outlined"
     closable
     @click:close="handleClose"
     class="alert-max-priority"
@@ -60,7 +61,7 @@ onUnmounted(() => {
 
 <style scoped>
 .alert-max-priority {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   border-radius: 8px;
 }
 
