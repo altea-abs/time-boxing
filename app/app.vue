@@ -17,7 +17,10 @@
       <div class="header-content">
         <v-app-bar-title class="header-title">
           <div class="title-main">Brain Dump & Timeboxing</div>
-          <div class="title-sub">Daily Planner</div>
+          <div class="title-sub">
+            Daily Planner
+            <span class="version-badge">v{{ appVersion }}</span>
+          </div>
         </v-app-bar-title>
       </div>
 
@@ -68,8 +71,10 @@
 </template>
 
 <script setup>
+const config = useRuntimeConfig()
 const showHelp = ref(false)
 const showSettings = ref(false)
+const appVersion = ref(config.public.appVersion)
 
 const handlePriorityToggled = (task) => {
   console.log('Priority toggled for task:', task)
@@ -166,6 +171,27 @@ body {
   opacity: 0.9;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.version-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.version-badge:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
 }
 
 .header-actions {
@@ -213,6 +239,13 @@ body {
   
   .title-sub {
     font-size: 0.75rem;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .version-badge {
+    font-size: 0.625rem;
+    padding: 0.0625rem 0.375rem;
   }
   
   .header-actions {
