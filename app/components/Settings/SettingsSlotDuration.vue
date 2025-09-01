@@ -54,8 +54,7 @@ const updateSlotDuration = (value: number) => {
 <style scoped>
 .settings-slot-duration {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 1rem;
   padding: 1rem;
   background: rgba(var(--v-theme-surface-variant), 0.5);
@@ -63,10 +62,10 @@ const updateSlotDuration = (value: number) => {
 }
 
 .setting-label {
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  text-align: center;
 }
 
 .setting-name {
@@ -81,23 +80,12 @@ const updateSlotDuration = (value: number) => {
 }
 
 .duration-control {
-  flex-shrink: 0;
-  min-width: 140px;
+  display: flex;
+  justify-content: center;
 }
 
 .duration-select {
-  min-width: 140px;
-}
-
-@media (max-width: 600px) {
-  .settings-slot-duration {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-  
-  .duration-control {
-    min-width: unset;
-  }
+  min-width: 180px;
+  max-width: 200px;
 }
 </style>
