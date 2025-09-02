@@ -38,6 +38,8 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 - **Multi-Assignment** con due modalità:
   - 🔘 **Toggle Button**: Click per attivare/disattivare
   - ⌨️ **Ctrl+Drag**: Tieni Ctrl durante il drag per selezione multipla
+- **Sistema Undo/Redo completo** - annulla e ripristina operazioni sui time slot
+- **Gestione conflitti intelligente** - conferma sovrascrittura con opzione scambio
 - **Slot adiacenti intelligenti** - espandi automaticamente task vicini
 - **Sistema di retention** - dati vecchi rimossi automaticamente dopo N giorni
 
@@ -210,6 +212,9 @@ npm run typecheck    # Controllo tipi TypeScript
 - **Multi-Assignment**: 
   - 🔘 Attiva toggle "Multi-Assign" → drag attraverso più slot
   - ⌨️ Tieni `Ctrl` + drag attraverso slot multipli
+- **Sistema Undo/Redo**: Annulla/ripristina modifiche con `Ctrl+Z`/`Ctrl+Y`
+- **Gestione Conflitti**: Conferma automatica per sovrascrizione slot occupati
+- **Opzione Scambio**: Scambia task tra slot quando possibile
 
 ### 4. **Note Giornaliere per Data**
 - Sezione dedicata per riflessioni e promemoria organizzate per giorno
@@ -237,9 +242,9 @@ npm run typecheck    # Controllo tipi TypeScript
 - **`Alt+G`**: Apri repository GitHub
 - **`Esc`**: Chiudi modali aperti
 - **`Ctrl+Drag`**: Multi-assegnazione task su time slots
- - **`Ctrl/Cmd+Z`**: Annulla ultima operazione (Undo)
- - **`Ctrl/Cmd+Y`**: Ripristina operazione (Redo)
- - **`Ctrl/Cmd+Shift+Z`**: Ripristina alternativa (Redo)
+- **`Ctrl/Cmd+Z`**: Annulla ultima operazione (Undo)
+- **`Ctrl/Cmd+Y`**: Ripristina operazione (Redo)
+- **`Ctrl/Cmd+Shift+Z`**: Ripristina alternativa (Redo)
 
 ## 🔧 Personalizzazione
 

@@ -43,10 +43,13 @@ The application uses specialized Pinia stores with date-based organization and r
 - **Retention**: Automatic cleanup of priority data older than retention period
 - **Migration**: Automatic conversion from old single-array format to date-based format
 
-#### 3. `useTimeSlots.ts` - Multi-Day Time Grid Management
-- **Purpose**: Dynamic time slot generation with multi-day navigation and blocked slots
+#### 3. `useTimeSlots.ts` - Multi-Day Time Grid Management with Undo/Redo
+- **Purpose**: Dynamic time slot generation with multi-day navigation, blocked slots, and history tracking
 - **Navigation Actions**: `goToPreviousDay()`, `goToNextDay()`, `goToToday()`
 - **Key Actions**: `generateSlotsForDate(date)`, `assignTaskToSlot()`, `cleanupOldSlots()`
+- **Undo/Redo System**: Complete history stack with `undo()`, `redo()`, `canUndo`, `canRedo`
+- **History Management**: Tracks slot changes with before/after states, 100-entry limit
+- **Conflict Resolution**: Smart overwrite confirmation with swap option for occupied slots
 - **Blocked Slots Integration**: Automatically respects configured recurring activities
 - **Storage**: localStorage key `braindump-timeslots`
 - **Retention Coordination**: Triggers cleanup for all stores when generating slots
@@ -159,7 +162,9 @@ app.vue (with Alt+S settings shortcut and modern header)
 │   ├── AlertMaxPriority.vue (Vuetify v-alert)
 │   ├── TaskInput.vue (Vuetify v-text-field with + icon)
 │   └── NotesSection.vue (Daily notes with copy/clear)
-├── TimeSlotSection.vue (Right column - dynamic time grid)
+├── TimeSlotSection.vue (Right column - dynamic time grid with undo/redo)
+├── Dialog/ (Modal components for confirmations)
+│   └── DialogOverwriteSlot.vue (Slot overwrite confirmation with swap option)
 └── Settings/ (Modal components - 800px width)
     ├── SettingsDialog.vue (Responsive 2-column layout)
     ├── SettingsPriority.vue (Slider 1-10 with +/- buttons)
@@ -170,11 +175,62 @@ app.vue (with Alt+S settings shortcut and modern header)
 
 ### Communication Patterns
 - **BrainDumpSection** orchestrates task/priority store interactions with date context
-- **TimeSlotSection** handles navigation and blocked slots integration
+- **TimeSlotSection** handles navigation, blocked slots integration, undo/redo operations, and conflict resolution
+- **DialogOverwriteSlot** provides user confirmation for occupied slot drops with swap/overwrite options
 - **NotesSection** uses reactive computed properties for seamless date-based note management
 - Components use `storeToRefs()` for reactive store values
 - Event emission for parent-child communication
 - Cross-store synchronization via boolean return values and coordinated cleanup
+- Global keyboard event handling for undo/redo shortcuts across the application
+
+## Undo/Redo System Architecture
+
+The application implements a comprehensive undo/redo system specifically for time slot operations:
+
+### History Stack Implementation
+```typescript
+type SlotChange = { slotId: string; beforeTask: Task | null; afterTask: Task | null }
+type HistoryEntry = { label: string; changes: SlotChange[]; at: number }
+const historyPast = ref<HistoryEntry[]>([])
+const historyFuture = ref<HistoryEntry[]>([])
+const historyLimit = 100
+```
+
+### Key Operations Tracked
+- **Task Assignment**: `assignTaskToSlot()` records before/after states
+- **Task Removal**: `removeTaskFromSlot()` and `removeTaskFromAllSlots()` 
+- **Bulk Operations**: `clearAllSlots()` tracks multiple slot changes
+- **Swap Operations**: Task exchanges between occupied slots
+
+### History Management
+- **Push History**: `pushHistory(entry)` adds new entries and clears future stack
+- **Undo Operation**: `undo()` reverts changes and moves entry to future stack
+- **Redo Operation**: `redo()` reapplies changes and moves entry back to past
+- **Capacity Management**: Automatically limits to 100 entries to prevent memory issues
+
+### Integration with Components
+```typescript
+// TimeSlotSection.vue keyboard handlers
+const handleKeyDown = (event: KeyboardEvent) => {
+  const isCtrlLike = event.ctrlKey || event.metaKey
+  if (isCtrlLike && event.key.toLowerCase() === 'z') {
+    event.preventDefault()
+    if (event.shiftKey) {
+      timeSlotsStore.redo() // Ctrl+Shift+Z
+    } else {
+      timeSlotsStore.undo() // Ctrl+Z
+    }
+  } else if (isCtrlLike && event.key.toLowerCase() === 'y') {
+    timeSlotsStore.redo() // Ctrl+Y
+  }
+}
+```
+
+### UI Controls
+- **Undo Button**: Shows when `canUndo` is true, triggers `undo()` action
+- **Redo Button**: Shows when `canRedo` is true, triggers `redo()` action
+- **Keyboard Shortcuts**: Full support for Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z
+- **Visual Feedback**: Button states reflect availability of operations
 
 ## TypeScript Organization
 
@@ -248,7 +304,9 @@ store.priorities[0] = newTask
 - ✅ **Complete TypeScript system** with date-based interfaces and blocked slot types
 - ✅ **Settings panel** with blocked slots CRUD interface, real-time preview and validation
 - ✅ **Vuetify Material Design** integration with modern header and responsive design
-- ✅ **Keyboard shortcuts** (Alt+S for settings, Esc to close, Ctrl+Drag for multi-assignment)
+- ✅ **Complete undo/redo system** for time slot operations with keyboard shortcuts
+- ✅ **Enhanced conflict resolution** with overwrite confirmation and swap options
+- ✅ **Keyboard shortcuts** (Alt+S for settings, Esc to close, Ctrl+Drag for multi-assignment, Ctrl+Z/Y for undo/redo)
 - ✅ **Responsive design** (2-column on desktop, single on mobile) with blocked slots integration
 
 ## Keyboard Shortcuts & User Interactions
@@ -259,6 +317,9 @@ store.priorities[0] = newTask
 - **`Alt+G`**: Open GitHub repository in new tab
 - **`Esc`**: Close any open modal/dialog
 - **`Ctrl+Drag`**: Multi-assignment in time slots
+- **`Ctrl/Cmd+Z`**: Undo last time slot operation
+- **`Ctrl/Cmd+Y`**: Redo time slot operation
+- **`Ctrl/Cmd+Shift+Z`**: Alternative redo shortcut
 
 ### Settings Dialog Features
 - **Modal Width**: 800px (increased from 500px for better layout)
@@ -278,6 +339,8 @@ store.priorities[0] = newTask
 - **Priority Sync**: Tasks dragged to time slots maintain priority status with star indicator
 - **Multi-slot Support**: Tasks can be assigned to multiple time slots
 - **Blocked Slot Integration**: Drag & drop respects blocked slots with visual feedback
+- **Conflict Resolution**: Automatic confirmation dialogs for occupied slot drops
+- **Smart Swap Option**: Swap tasks between slots when dragging from existing assignment
 
 ### Data Migration & Backward Compatibility
 - **Automatic migrations** when upgrading from single-data to date-based organization
