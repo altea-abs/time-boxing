@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/altea-abs/time-boxing/compare/v1.2.0...v1.2.1) (2025-09-02)
+
+
+### 📚 Documentation
+
+* update project documentation to reflect v1.2.0 undo/redo system ([d3f3fb0](https://github.com/altea-abs/time-boxing/commit/d3f3fb03eddf0671af3aef9db29b4ee463c9be6f))
+
+
+### 🐛 Bug Fixes
+
+* **ui:** enable drag and drop from braindump to priorities ([0bdabd6](https://github.com/altea-abs/time-boxing/commit/0bdabd6b148aed8389bfb4cd69fb246e986bce4c))
+
 ## [1.2.0](https://github.com/altea-abs/time-boxing/compare/v1.1.0...v1.2.0) (2025-09-02)
 
 
