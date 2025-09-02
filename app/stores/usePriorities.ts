@@ -187,6 +187,24 @@ export const usePrioritiesStore = defineStore('priorities', () => {
     }
     return false
   }
+
+  const setAtIndex = (task: Task, index: number): boolean => {
+    if (index < 0 || index >= maxPriorities.value) {
+      return false
+    }
+
+    // Check if task is already in priorities at a different position
+    const existingIndex = priorities.value.findIndex(p => p?.id === task.id)
+    if (existingIndex !== -1 && existingIndex !== index) {
+      // Remove from old position
+      priorities.value[existingIndex] = null
+    }
+
+    // Set at the specified index
+    priorities.value[index] = { ...task }
+    savePriorities()
+    return true
+  }
   
   // Cleanup old priorities based on retention policy
   const cleanupOldPriorities = (): void => {
@@ -297,6 +315,7 @@ export const usePrioritiesStore = defineStore('priorities', () => {
     removeByIndex,
     clear,
     reorder,
+    setAtIndex,
     showAlert,
     hideAlert,
     findTaskById,

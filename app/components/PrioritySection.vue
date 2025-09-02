@@ -112,6 +112,26 @@ const handleDrop = (event: DragEvent, targetIndex: number) => {
     if (success) {
       console.log(`Priority reordered from ${dragSourceIndex.value + 1} to ${targetIndex + 1}`)
     }
+  } else {
+    // Handle external drops (from braindump)
+    const taskData = event.dataTransfer?.getData('application/json')
+    if (taskData) {
+      try {
+        const task = JSON.parse(taskData) as Task
+        console.log(`🎯 Dropping task "${task.text}" on priority slot ${targetIndex + 1}`)
+        
+        // Set the task at the specific priority position
+        const success = prioritiesStore.setAtIndex(task, targetIndex)
+        if (success) {
+          // Update the task in tasks store to mark as priority
+          const tasksStore = useTasksStore()
+          tasksStore.updateTask(task.id, { isPriority: true })
+          console.log(`✅ Task assigned to priority ${targetIndex + 1}`)
+        }
+      } catch (error) {
+        console.error('Error parsing dropped task data:', error)
+      }
+    }
   }
   
   // Reset drag state
