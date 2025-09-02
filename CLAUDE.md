@@ -38,7 +38,9 @@ The application uses specialized Pinia stores with date-based organization and r
 #### 2. `usePriorities.ts` - Date-Based Priority Slot Management  
 - **Purpose**: Manages priority slots (1-10, default 5) organized by date
 - **Key Structure**: `prioritiesByDate: Record<string, (Task | null)[]>` instead of single array
-- **Key Actions**: `add(task)`, `remove(task)`, `removeByIndex(index)`, `cleanupOldPriorities()`
+- **Key Actions**: `add(task)`, `remove(task)`, `removeByIndex(index)`, `setAtIndex(task, index)`, `cleanupOldPriorities()`
+- **Direct Assignment**: `setAtIndex()` enables drag-and-drop to specific priority positions
+- **Auto-reordering**: Removes task from previous position when moved to new slot
 - **Storage**: localStorage key `braindump-priorities`
 - **Retention**: Automatic cleanup of priority data older than retention period
 - **Migration**: Automatic conversion from old single-array format to date-based format
@@ -84,6 +86,12 @@ const newTask = tasksStore.addTask(text) // Auto-assigns current date
 const success = prioritiesStore.add(newTask)
 if (success) {
   tasksStore.updateTask(newTask.id, { isPriority: true })
+}
+
+// Direct assignment to specific priority slot (v1.2.1+)
+const success = prioritiesStore.setAtIndex(task, 2) // Assign to priority slot 3
+if (success) {
+  tasksStore.updateTask(task.id, { isPriority: true })
 }
 
 // Date navigation triggers coordinated cleanup
@@ -175,6 +183,10 @@ app.vue (with Alt+S settings shortcut and modern header)
 
 ### Communication Patterns
 - **BrainDumpSection** orchestrates task/priority store interactions with date context
+- **PrioritySection** handles direct drag-and-drop assignment with `setAtIndex()` method
+  - External drops from braindump to specific priority positions
+  - Internal reordering between priority slots
+  - Automatic task priority status synchronization
 - **TimeSlotSection** handles navigation, blocked slots integration, undo/redo operations, and conflict resolution
 - **DialogOverwriteSlot** provides user confirmation for occupied slot drops with swap/overwrite options
 - **NotesSection** uses reactive computed properties for seamless date-based note management

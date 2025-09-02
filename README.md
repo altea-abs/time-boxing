@@ -14,6 +14,7 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 
 </div>
 
+![Version](https://img.shields.io/badge/Version-1.2.1-28a745?style=for-the-badge)
 ![Nuxt 4](https://img.shields.io/badge/Nuxt-4.0.3-00C58E?style=for-the-badge&logo=nuxt.js&logoColor=white)
 ![Vue 3](https://img.shields.io/badge/Vue-3.x-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
@@ -24,7 +25,10 @@ Un'applicazione web moderna per la gestione delle attività quotidiane e la pian
 ### 🧠 **Brain Dump**
 - **Cattura rapida** di tutti i tuoi pensieri e task
 - **Sistema di priorità** configurabile (1-10 priorità, default 5)
-- **Drag & Drop** intuitivo per riorganizzare
+- **Drag & Drop intuitivo** per riorganizzare e assegnazione diretta
+  - 🎯 **Drag to Priorities**: Trascina task direttamente su slot priorità specifici
+  - 🔄 **Auto-reordering**: Rimozione automatica da posizione precedente quando spostato
+  - ⭐ **Priority Sync**: Stato priorità aggiornato automaticamente
 - **Organizzazione per data** - tasks e priorità organizzati per giorno
 - **Persistenza automatica** con sincronizzazione multi-tab
 - **Sistema di retention** configurabile per cleanup automatico dati vecchi
@@ -121,6 +125,8 @@ L'applicazione utilizza un'architettura di store specializzati con organizzazion
 
 #### 2. **`usePriorities.ts`** - Gestione Slot Priorità per Data
 - Gestione slot priorità organizzati per data (`prioritiesByDate`)
+- **Assegnazione diretta**: `setAtIndex(task, index)` per posizionamento specifico
+- **Auto-reordering**: Rimozione automatica da slot precedente quando riposizionato
 - **Retention system**: cleanup priorità vecchie automatico
 - Migrazione automatica da formato singolo a formato per data
 - Alerts automatici quando si raggiunge il limite
@@ -201,7 +207,10 @@ npm run typecheck    # Controllo tipi TypeScript
 
 ### 2. **Gestione Priorità**  
 - Sistema configurabile (default 5 slot priorità)
-- Drag & drop per riorganizzare
+- **Drag & Drop avanzato**:
+  - 🎯 **Da Brain Dump**: Trascina task direttamente su slot priorità specifici
+  - 🔄 **Riorganizzazione**: Riordina priorità esistenti tra slot
+  - ⭐ **Sync automatico**: Stato priorità task aggiornato automaticamente
 - Alert automatico al raggiungimento limite
 
 ### 3. **Time Slots - Pianificazione Multi-Giorno**
