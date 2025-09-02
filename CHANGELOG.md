@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/altea-abs/time-boxing/compare/v1.1.0...v1.2.0) (2025-09-02)
+
+
+### ✨ Features
+
+* **shortcuts:** add undo/redo keyboard shortcuts ([04aa594](https://github.com/altea-abs/time-boxing/commit/04aa59492bde1aab03380b5bebbe1bb53658456e))
+* **timeSlots:** add swap option on occupied-slot drop ([ab08f9d](https://github.com/altea-abs/time-boxing/commit/ab08f9d909f01bcf224acafd020fb599e31acfa7))
+* **timeslots:** add undo/redo history stack for slot task changes ([0cdbaf4](https://github.com/altea-abs/time-boxing/commit/0cdbaf46dd93e191595cbacf3813467adbad03af))
+* **timeslots:** confirm overwrite on occupied slot drop ([29ef5eb](https://github.com/altea-abs/time-boxing/commit/29ef5eba31bd9562f9b34a31b59200f884b054b2))
+* **ui:** add undo/redo controls ([812dbc7](https://github.com/altea-abs/time-boxing/commit/812dbc73c5ed40b3272a52c099f7d222608d0876))
+
+
+### 📚 Documentation
+
+* **help:** document undo/redo keyboard shortcuts ([6cf643f](https://github.com/altea-abs/time-boxing/commit/6cf643feed43a0199efaaa0267d3760839863309))
+* **readme:** add undo/redo keyboard shortcuts ([75e41cc](https://github.com/altea-abs/time-boxing/commit/75e41cc0596ed8d08413f49c33d78b3682e5faad))
+
+
+### 🐛 Bug Fixes
+
+* **ui:** remove multi-assign active banner in TimeSlotSection ([3d00f79](https://github.com/altea-abs/time-boxing/commit/3d00f7990d5340f93e3e9f28037cdd1790e1b393))
+
 ## [1.1.0](https://github.com/altea-abs/time-boxing/compare/v1.0.0...v1.1.0) (2025-09-01)
 
 
