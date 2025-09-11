@@ -11,13 +11,7 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   // Available dates for navigation
   const availableDates = ref<string[]>([])
   
-  // Default time grid configuration (using settings store values)
-  const defaultGridConfig: TimeGridConfig = {
-    startHour: 9, // 9:00
-    endHour: 18, // 18:00
-    slotDuration: 30, // 30 minuti
-    includedDays: [1, 2, 3, 4, 5] // Lun-Ven
-  }
+  // Note: Grid config is managed by settings store, no default needed here
   
   // Dynamic grid config that updates with settings
   const gridConfig = computed((): TimeGridConfig => ({
@@ -534,6 +528,11 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
   const loadTimeSlots = (): void => {
     if (typeof window !== 'undefined') {
       try {
+        // Always ensure currentDate is set first
+        if (!currentDate.value) {
+          currentDate.value = new Date()
+        }
+        
         const saved = localStorage.getItem('braindump-timeslots')
         if (saved) {
           const parsedData = JSON.parse(saved)
@@ -552,9 +551,8 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
             currentDate.value = new Date(parsedData.currentDate)
           }
           
-          if (parsedData.gridConfig) {
-            gridConfig.value = { ...defaultGridConfig, ...parsedData.gridConfig }
-          }
+          // Note: gridConfig is computed from settings store, so no need to restore it
+          // The settings store handles its own persistence
         }
         
         // Only generate slots if we don't have any for the current date
@@ -572,6 +570,10 @@ export const useTimeSlotsStore = defineStore('timeSlots', () => {
         
       } catch (error) {
         console.error('Error loading time slots from localStorage:', error)
+        // Ensure currentDate is set even on error
+        if (!currentDate.value) {
+          currentDate.value = new Date()
+        }
         generateSlotsForDate(currentDate.value)
       }
     }
