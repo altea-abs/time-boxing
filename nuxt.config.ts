@@ -49,7 +49,7 @@ export default defineNuxtConfig({
     // Public runtime config (exposed to client)
     public: {
       appVersion: packageJson.version,
-      maxPriorities: parseInt(process.env.NUXT_MAX_PRIORITIES || '5'),
+      maxPriorities: parseInt(process.env.NUXT_MAX_PRIORITIES || '3'),
       alertAutoHideDelay: parseInt(process.env.NUXT_ALERT_AUTO_HIDE_DELAY || '5000'),
       autoSaveEnabled: process.env.NUXT_AUTO_SAVE_ENABLED !== 'false',
       defaultStartHour: parseInt(process.env.NUXT_DEFAULT_START_HOUR || '9'),
