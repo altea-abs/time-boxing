@@ -87,9 +87,6 @@
               <div class="error-code">
                 <strong>Codice:</strong> {{ error.statusCode }}
               </div>
-              <div class="error-url" v-if="error.url">
-                <strong>URL:</strong> {{ error.url }}
-              </div>
               <div class="error-stack" v-if="isDev && error.stack">
                 <details>
                   <summary>Stack Trace (Sviluppo)</summary>
@@ -341,8 +338,7 @@ useHead({
   color: rgb(var(--v-theme-on-surface));
 }
 
-.error-code,
-.error-url {
+.error-code {
   margin-bottom: 0.5rem;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9rem;
