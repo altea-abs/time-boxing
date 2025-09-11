@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/altea-abs/time-boxing/compare/v1.2.1...v1.2.2) (2025-09-11)
+
+
+### 📚 Documentation
+
+* update project documentation to reflect v1.2.1 drag and drop enhancements ([5e85dc9](https://github.com/altea-abs/time-boxing/commit/5e85dc902a8fcf2d10233f5f0d6e42f53033f141))
+
+
+### ✨ Features
+
+* **ui:** add custom error page with app styling ([1560a96](https://github.com/altea-abs/time-boxing/commit/1560a96699cc02dd831d83eca25229b1bae1b3fa))
+
+
+### 🐛 Bug Fixes
+
+* **deps:** add TypeScript dependency and fix error page issues ([5f57605](https://github.com/altea-abs/time-boxing/commit/5f57605cc183b2039b2e9ea70a5e76974b87049e))
+* **stores:** resolve currentDate undefined errors across all stores ([f91e3fe](https://github.com/altea-abs/time-boxing/commit/f91e3fec52c02e2c9a7a9be18b219cb6659890ee))
+* **stores:** resolve time slots loading error when localStorage is empty ([71da817](https://github.com/altea-abs/time-boxing/commit/71da81772e8e1152f11a0f48587ea69794e3a649))
+
 ### [1.2.1](https://github.com/altea-abs/time-boxing/compare/v1.2.0...v1.2.1) (2025-09-02)
 
 
