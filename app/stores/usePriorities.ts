@@ -29,7 +29,7 @@ export const usePrioritiesStore = defineStore('priorities', () => {
   // Get current date priorities
   const priorities = computed(() => {
     const timeSlotsStore = useTimeSlotsStore()
-    const currentDateString = timeSlotsStore.currentDate.toISOString().split('T')[0]
+    const currentDateString = timeSlotsStore.currentDate?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0]
     
     if (!prioritiesByDate.value[currentDateString]) {
       prioritiesByDate.value[currentDateString] = new Array(maxPriorities.value).fill(null)
@@ -129,7 +129,7 @@ export const usePrioritiesStore = defineStore('priorities', () => {
 
   const clear = (): void => {
     const timeSlotsStore = useTimeSlotsStore()
-    const currentDateString = timeSlotsStore.currentDate.toISOString().split('T')[0]
+    const currentDateString = timeSlotsStore.currentDate?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0]
     
     prioritiesByDate.value[currentDateString] = new Array(maxPriorities.value).fill(null)
     savePriorities()

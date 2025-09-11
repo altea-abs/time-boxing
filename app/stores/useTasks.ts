@@ -19,7 +19,7 @@ export const useTasksStore = defineStore('tasks', () => {
     // Get current date from timeSlots store
     const timeSlotsStore = useTimeSlotsStore()
     const currentDate = timeSlotsStore.currentDate
-    const currentDateString = currentDate.toISOString().split('T')[0]
+    const currentDateString = currentDate?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0]
     
     return tasks.value.filter(task => task.date === currentDateString)
       .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
@@ -48,7 +48,7 @@ export const useTasksStore = defineStore('tasks', () => {
     if (dateString) {
       currentDateString = dateString
     } else if (timeSlotsStore.currentDate) {
-      currentDateString = timeSlotsStore.currentDate.toISOString().split('T')[0] || timeSlotsStore.currentDate.toISOString().substring(0, 10)
+      currentDateString = timeSlotsStore.currentDate.toISOString().split('T')[0]
     } else {
       currentDateString = fallbackDate
     }

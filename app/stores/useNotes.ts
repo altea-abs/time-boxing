@@ -10,7 +10,7 @@ export const useNotesStore = defineStore('notes', () => {
   // Get current date notes
   const currentNotes = computed(() => {
     const timeSlotsStore = useTimeSlotsStore()
-    const currentDateString = timeSlotsStore.currentDate.toISOString().split('T')[0]
+    const currentDateString = timeSlotsStore.currentDate?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0]
     
     if (!notesByDate.value[currentDateString]) {
       notesByDate.value[currentDateString] = {
@@ -65,7 +65,7 @@ export const useNotesStore = defineStore('notes', () => {
   // Actions
   const updateNotes = (content: string, dateString?: string): DailyNotes => {
     const timeSlotsStore = useTimeSlotsStore()
-    const targetDate = dateString ?? timeSlotsStore.currentDate.toISOString().split('T')[0]
+    const targetDate = dateString ?? (timeSlotsStore.currentDate?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0])
     
     if (!notesByDate.value[targetDate]) {
       notesByDate.value[targetDate] = {
@@ -93,7 +93,7 @@ export const useNotesStore = defineStore('notes', () => {
   
   const clearNotes = (dateString?: string): void => {
     const timeSlotsStore = useTimeSlotsStore()
-    const targetDate = dateString ?? timeSlotsStore.currentDate.toISOString().split('T')[0]
+    const targetDate = dateString ?? (timeSlotsStore.currentDate?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0])
     
     if (notesByDate.value[targetDate]) {
       notesByDate.value[targetDate].content = ''
