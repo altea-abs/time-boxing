@@ -2,12 +2,22 @@
   <v-app>
     <NuxtRouteAnnouncer />
     <v-app-bar
-      color="navigationBar"
+      color="surface-bright"
       dark
       prominent
       flat
       class="app-header"
     >
+      <template #prepend>
+        <v-img
+          :src="iconSrc"
+          alt="Logo"
+          width="40"
+          height="40"
+          class="header-logo mr-3"
+        />
+      </template>
+
       <div class="header-content">
         <v-app-bar-title class="header-title">
           <div class="title-main">Brain Dump & Timeboxing</div>
@@ -69,6 +79,7 @@ const config = useRuntimeConfig()
 const showHelp = ref(false)
 const showSettings = ref(false)
 const appVersion = ref(config.public.appVersion)
+const iconSrc = `${config.app.baseURL}icon-white.svg`
 
 const handlePriorityToggled = (task) => {
   console.log('Priority toggled for task:', task)
