@@ -3,7 +3,7 @@
     <NuxtRouteAnnouncer />
     <v-app-bar
       color="surface-bright"
-      dark
+      theme="dark"
       prominent
       flat
       class="app-header"
@@ -20,16 +20,20 @@
 
       <div class="header-content">
         <v-app-bar-title class="header-title">
-          <div class="title-main">Brain Dump & Timeboxing</div>
-          <div class="title-sub">
-            Daily Planner
-            <span class="version-badge">v{{ appVersion }}</span>
-          </div>
+          <span class="title-main">Brain Dump &amp; Timeboxing</span>
+          <span class="version-badge">v{{ appVersion }}</span>
         </v-app-bar-title>
       </div>
 
       <template #append>
         <div class="header-actions">
+          <v-btn
+            :icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+            variant="text"
+            size="default"
+            @click="toggleTheme"
+            :title="isDark ? 'Passa al tema chiaro' : 'Passa al tema scuro'"
+          />
           <v-btn
             icon="mdi-cog"
             variant="text"
@@ -75,11 +79,24 @@
 </template>
 
 <script setup>
+import { useTheme } from 'vuetify'
+
 const config = useRuntimeConfig()
 const showHelp = ref(false)
 const showSettings = ref(false)
 const appVersion = ref(config.public.appVersion)
 const iconSrc = `${config.app.baseURL}icon-white.svg`
+
+// Light/dark theme toggle (persisted; falls back to system preference)
+const theme = useTheme()
+const isDark = computed(() => theme.global.name.value === 'dark')
+const toggleTheme = () => {
+  const next = isDark.value ? 'light' : 'dark'
+  theme.global.name.value = next
+  if (import.meta.client) {
+    localStorage.setItem('braindump-theme', next)
+  }
+}
 
 const handlePriorityToggled = (task) => {
   console.log('Priority toggled for task:', task)
@@ -158,27 +175,17 @@ body {
 
 .header-title {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+  gap: 0.75rem;
 }
 
 .title-main {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.title-sub {
-  font-size: 0.875rem;
-  font-weight: 400;
-  opacity: 0.9;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  white-space: nowrap;
 }
 
 .version-badge {
@@ -241,13 +248,7 @@ body {
   .title-main {
     font-size: 1.25rem;
   }
-  
-  .title-sub {
-    font-size: 0.75rem;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
+
   .version-badge {
     font-size: 0.625rem;
     padding: 0.0625rem 0.375rem;

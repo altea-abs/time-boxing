@@ -14,6 +14,15 @@ export default defineNuxtPlugin((nuxtApp) => {
     return 'light' // fallback
   }
 
+  // User-selected theme persisted via the header toggle (overrides system)
+  const getStoredTheme = (): 'light' | 'dark' | null => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('braindump-theme')
+      if (stored === 'light' || stored === 'dark') return stored
+    }
+    return null
+  }
+
   const vuetify = createVuetify({
     components,
     directives,
@@ -28,7 +37,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       mobileBreakpoint: 'sm',
     },
     theme: {
-      defaultTheme: getSystemTheme(),
+      defaultTheme: getStoredTheme() || getSystemTheme(),
       themes: {
         dark: {
           dark: true,
@@ -140,6 +149,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
     
     const handleThemeChange = (e: MediaQueryListEvent) => {
+      // Respect an explicit user choice; only follow the system when unset
+      if (getStoredTheme()) return
       const newTheme = e.matches ? 'dark' : 'light'
       vuetify.theme.global.name.value = newTheme
     }
