@@ -102,14 +102,35 @@ export default defineNuxtPlugin((nuxtApp) => {
       },
     },
     defaults: {
+      // DESIGN.md: soften corners (md/lg scale), favor tonal layering over
+      // drop shadows (flat), and keep Green Rio Grande as the action accent.
       VBtn: {
         color: 'primary',
+        rounded: 'md',
+        flat: true,
+      },
+      VCard: {
+        rounded: 'lg',
+        flat: true,
       },
       VTextField: {
+        variant: 'filled',
         color: 'primary',
+        rounded: 'md',
       },
-      VAlert: {
+      VTextarea: {
+        variant: 'filled',
         color: 'primary',
+        rounded: 'md',
+      },
+      // Status chips are always pill-shaped (rounded-full).
+      VChip: {
+        rounded: 'pill',
+      },
+      // Let the alert `type` drive its color; keep soft tonal fill and rounding.
+      VAlert: {
+        variant: 'tonal',
+        rounded: 'md',
       },
     },
   })
