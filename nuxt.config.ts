@@ -5,6 +5,9 @@ import { resolve } from 'path'
 // Read version from package.json
 const packageJson = JSON.parse(readFileSync(resolve('./package.json'), 'utf-8'))
 
+// Base URL (respects GitHub Pages subpath); used for static asset links
+const baseURL = process.env.NUXT_APP_BASE_URL || '/'
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -20,6 +23,16 @@ export default defineNuxtConfig({
     head: {
       link: [
         {
+          rel: 'icon',
+          type: 'image/svg+xml',
+          href: `${baseURL}icon-white.svg`
+        },
+        {
+          rel: 'alternate icon',
+          type: 'image/x-icon',
+          href: `${baseURL}favicon.ico`
+        },
+        {
           rel: 'preconnect',
           href: 'https://fonts.googleapis.com'
         },
@@ -34,7 +47,7 @@ export default defineNuxtConfig({
         }
       ]
     },
-    baseURL: process.env.NUXT_APP_BASE_URL || '/',
+    baseURL,
     buildAssetsDir: 'assets/'
   },
   nitro: {
