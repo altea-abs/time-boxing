@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/altea-abs/time-boxing/compare/v1.2.2...v1.3.0) (2026-06-25)
+
+
+### 🐛 Bug Fixes
+
+* **ui:** restore visible flat app bar with SVG logo ([0e4b4a9](https://github.com/altea-abs/time-boxing/commit/0e4b4a9744af6e90c0b92e462cab2e6bed4384cc)), closes [#081928](https://github.com/altea-abs/time-boxing/issues/081928)
+* **ui:** stop global reset from flattening Vuetify 4 component padding ([6f84081](https://github.com/altea-abs/time-boxing/commit/6f84081edb6d039787274f6559be4dee3a2fa21a))
+
+
+### ✨ Features
+
+* **ui:** align Vuetify component defaults with DESIGN.md ([3386856](https://github.com/altea-abs/time-boxing/commit/338685691706ab64c449eb042e8985959f04ccc8))
+* **ui:** apply AlteaON Precision Architect theme tokens ([2ebaa4f](https://github.com/altea-abs/time-boxing/commit/2ebaa4ff8f949fbaa78a9e6bf64ce9fe21e92535))
+* **ui:** flatten app bar and remove header brain icon ([37a5e21](https://github.com/altea-abs/time-boxing/commit/37a5e219694be5add3d15ff92bba100c8508f1bf))
+* **ui:** single-line header title and light/dark theme toggle ([377b6c0](https://github.com/altea-abs/time-boxing/commit/377b6c08b46da915a92602986b45689c7376273c))
+* **ui:** theme-aware header, blue light-mode icons, version on the right ([6fdfd07](https://github.com/altea-abs/time-boxing/commit/6fdfd07c2a57f6b3658ba63c1f4706f94a5425c7))
+* **ui:** use icon-white.svg as the app favicon ([b30bf6f](https://github.com/altea-abs/time-boxing/commit/b30bf6faf7b0672d3c399203e703348e9655384e))
+* **ui:** white header with color logo and stronger text contrast ([2afe1a7](https://github.com/altea-abs/time-boxing/commit/2afe1a7ce39f0ef1ea6fcb8cdc53c689567c8c1e))
+
+
+### 📚 Documentation
+
+* add AlteaON Precision Architect design system reference ([d4fcd51](https://github.com/altea-abs/time-boxing/commit/d4fcd516963ca39d056e07be575da29a23ccf458))
+
+
+### ♻️ Chores
+
+* **assets:** version brand logo sources, favicon and nuxt config ([b9426a9](https://github.com/altea-abs/time-boxing/commit/b9426a9cecc04486f3f9352e2ad17282c9b52aed))
+* **deps:** upgrade dependencies and resolve audit issues ([3968b9a](https://github.com/altea-abs/time-boxing/commit/3968b9a1c20e42a540879d9c7b7176a198b5eb00))
+* update maxPriorities in config ([b3bf325](https://github.com/altea-abs/time-boxing/commit/b3bf325559410d4346b7c1105fa12bc1888ea166))
+
 ### [1.2.2](https://github.com/altea-abs/time-boxing/compare/v1.2.1...v1.2.2) (2025-09-11)
 
 
