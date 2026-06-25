@@ -2,18 +2,12 @@
   <v-app>
     <NuxtRouteAnnouncer />
     <v-app-bar
-      color="primary"
+      color="navigationBar"
       dark
       prominent
-      elevation="4"
+      flat
       class="app-header"
     >
-      <template #prepend>
-        <div class="header-icon">
-          <v-icon icon="mdi-brain" size="32" class="mr-3" />
-        </div>
-      </template>
-      
       <div class="header-content">
         <v-app-bar-title class="header-title">
           <div class="title-main">Brain Dump & Timeboxing</div>
@@ -131,19 +125,8 @@ body {
 }
 
 .app-header {
-  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-secondary)) 100%) !important;
-  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.25) !important;
-}
-
-.header-icon {
-  display: flex;
-  align-items: center;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  /* Flat midnight bar (DESIGN.md navigationBar) — no gradient, no shadow */
+  box-shadow: none !important;
 }
 
 .header-content {
@@ -251,10 +234,6 @@ body {
   .header-actions {
     flex-direction: column;
     gap: 0.25rem;
-  }
-  
-  .header-icon {
-    animation: none;
   }
 }
 </style>
