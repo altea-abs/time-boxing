@@ -115,10 +115,21 @@ onMounted(() => {
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+/* Reset element margins only. Do NOT reset padding globally: Vuetify 4 ships
+   its component styles inside an @layer, so an unlayered `* { padding: 0 }`
+   would override (and flatten) the padding of every Vuetify chip, button,
+   input, etc. The app's own elements set their padding explicitly. */
+body,
+h1, h2, h3, h4, h5, h6,
+p, figure, blockquote, dl, dd,
+ul, ol {
+  margin: 0;
 }
 
 body {
