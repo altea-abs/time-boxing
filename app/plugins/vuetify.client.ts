@@ -48,7 +48,7 @@ export default defineNuxtPlugin((nuxtApp) => {
             'surface': '#071d30',
             'surface-bright': '#0d2540',
             'surface-variant': '#0a1e30',
-            'on-surface-variant': '#8faac8',
+            'on-surface-variant': '#aac4dd',
             // Primary — Green Rio Grande pulse
             'primary': '#b2d600',
             'primary-darken-1': '#8fa800',

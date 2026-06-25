@@ -2,8 +2,7 @@
   <v-app>
     <NuxtRouteAnnouncer />
     <v-app-bar
-      color="surface-bright"
-      theme="dark"
+      color="white"
       prominent
       flat
       class="app-header"
@@ -85,7 +84,7 @@ const config = useRuntimeConfig()
 const showHelp = ref(false)
 const showSettings = ref(false)
 const appVersion = ref(config.public.appVersion)
-const iconSrc = `${config.app.baseURL}icon-white.svg`
+const iconSrc = `${config.app.baseURL}icon.svg`
 
 // Light/dark theme toggle (persisted; falls back to system preference)
 const theme = useTheme()
@@ -164,8 +163,14 @@ body {
 }
 
 .app-header {
-  /* Flat midnight bar (DESIGN.md navigationBar) — no gradient, no shadow */
+  /* Flat white bar — no shadow. Title and icons in brand midnight. */
   box-shadow: none !important;
+  color: #081928;
+}
+
+/* Override the global primary (green) button default for header icons */
+.app-header .v-btn {
+  color: #081928;
 }
 
 .header-content {
@@ -189,20 +194,20 @@ body {
 }
 
 .version-badge {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(8, 25, 40, 0.08);
+  color: #081928;
   padding: 0.125rem 0.5rem;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: none;
   letter-spacing: normal;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(8, 25, 40, 0.15);
   transition: all 0.2s ease;
 }
 
 .version-badge:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(8, 25, 40, 0.12);
   transform: scale(1.05);
 }
 
