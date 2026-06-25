@@ -666,9 +666,9 @@ const confirmSwap = () => {
 
 .date-text {
   font-size: 0.875rem;
-  font-weight: 400;
+  font-weight: 500;
   margin: 0;
-  color: rgb(var(--v-theme-on-surface-variant));
+  color: rgb(var(--v-theme-on-surface));
 }
 
 .nav-btn {

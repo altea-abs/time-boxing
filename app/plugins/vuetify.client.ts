@@ -14,6 +14,15 @@ export default defineNuxtPlugin((nuxtApp) => {
     return 'light' // fallback
   }
 
+  // User-selected theme persisted via the header toggle (overrides system)
+  const getStoredTheme = (): 'light' | 'dark' | null => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('braindump-theme')
+      if (stored === 'light' || stored === 'dark') return stored
+    }
+    return null
+  }
+
   const vuetify = createVuetify({
     components,
     directives,
@@ -28,49 +37,110 @@ export default defineNuxtPlugin((nuxtApp) => {
       mobileBreakpoint: 'sm',
     },
     theme: {
-      defaultTheme: getSystemTheme(),
+      defaultTheme: getStoredTheme() || getSystemTheme(),
       themes: {
-        light: {
+        dark: {
+          dark: true,
           colors: {
-            primary: '#1976d2',
-            secondary: '#757575',
-            accent: '#82B1FF',
-            error: '#FF5252',
-            info: '#2196F3',
-            success: '#4CAF50',
-            warning: '#FFC107',
-            surface: '#FFFFFF',
-            'surface-variant': '#F5F5F5',
-            'on-surface': '#212121',
-            'on-surface-variant': '#757575',
+            // Canvas — deep midnight void
+            'background': '#081928',
+            // Surface tonal layers
+            'surface': '#071d30',
+            'surface-bright': '#0d2540',
+            'surface-variant': '#0a1e30',
+            'on-surface-variant': '#aac4dd',
+            // Primary — Green Rio Grande pulse
+            'primary': '#b2d600',
+            'primary-darken-1': '#8fa800',
+            'on-primary': '#081928',
+            'primary-container': '#cdf332',
+            'on-primary-container': '#081928',
+            // Secondary
+            'secondary': '#8faac8',
+            'on-secondary': '#081928',
+            'secondary-container': '#163558',
+            'on-secondary-container': '#d4e4f9',
+            // Tertiary — purple/lavender for informational alerts
+            'tertiary': '#9b74c4',
+            'on-tertiary': '#ffffff',
+            'tertiary-container': '#3b2558',
+            'on-tertiary-container': '#e8d9f8',
+            // Semantic colors
+            'error': '#cf6679',
+            'error-container': '#8b2533',
+            'on-error': '#ffffff',
+            'on-error-container': '#ffd9de',
+            'success': '#b2d600',
+            'success-container': '#3a4400',
+            'info': '#7b9fc2',
+            'warning': '#e6a817',
+            // Text — never pure white (DESIGN.md rule)
+            'on-surface': '#d4e4f9',
+            'on-background': '#d4e4f9',
+            // Ghost border fallback (15% opacity in usage)
+            'outline-variant': '#2a4a65',
+            'outline': '#3a5a78',
+            // Navigation & sidebar
+            'navigationBar': '#081928',
+            'sidebar': '#07192b',
           },
         },
-        dark: {
+        light: {
+          dark: false,
           colors: {
-            primary: '#2196F3',
-            secondary: '#424242',
-            accent: '#82B1FF',
-            error: '#FF5252',
-            info: '#2196F3',
-            success: '#4CAF50',
-            warning: '#FFC107',
-            surface: '#121212',
-            'surface-variant': '#1E1E1E',
-            'on-surface': '#FFFFFF',
-            'on-surface-variant': '#AAAAAA',
+            'background': '#f4f6f9',
+            'surface': '#ffffff',
+            'primary': '#b2d600',
+            'on-primary': '#081928',
+            'primary-container': '#cdf332',
+            'on-primary-container': '#1a2000',
+            'secondary': '#526070',
+            'on-secondary': '#ffffff',
+            'error': '#ba1a1a',
+            'error-container': '#ffdad6',
+            'success': '#386a20',
+            'info': '#2196F3',
+            'warning': '#e6a817',
+            'on-surface': '#181c20',
+            'on-surface-variant': '#4a5a6a',
+            'outline': '#72787e',
+            'outline-variant': '#c1c7ce',
+            'navigationBar': '#f6f6f6',
+            'sidebar': '#ffffff',
           },
         },
       },
     },
     defaults: {
+      // DESIGN.md: soften corners (md/lg scale), favor tonal layering over
+      // drop shadows (flat), and keep Green Rio Grande as the action accent.
       VBtn: {
         color: 'primary',
+        rounded: 'md',
+        flat: true,
+      },
+      VCard: {
+        rounded: 'lg',
+        flat: true,
       },
       VTextField: {
+        variant: 'filled',
         color: 'primary',
+        rounded: 'md',
       },
-      VAlert: {
+      VTextarea: {
+        variant: 'filled',
         color: 'primary',
+        rounded: 'md',
+      },
+      // Status chips are always pill-shaped (rounded-full).
+      VChip: {
+        rounded: 'pill',
+      },
+      // Let the alert `type` drive its color; keep soft tonal fill and rounding.
+      VAlert: {
+        variant: 'tonal',
+        rounded: 'md',
       },
     },
   })
@@ -80,6 +150,8 @@ export default defineNuxtPlugin((nuxtApp) => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
     
     const handleThemeChange = (e: MediaQueryListEvent) => {
+      // Respect an explicit user choice; only follow the system when unset
+      if (getStoredTheme()) return
       const newTheme = e.matches ? 'dark' : 'light'
       vuetify.theme.global.name.value = newTheme
     }

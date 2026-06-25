@@ -2,30 +2,37 @@
   <v-app>
     <NuxtRouteAnnouncer />
     <v-app-bar
-      color="primary"
-      dark
+      :color="isDark ? 'surface-bright' : 'white'"
+      :theme="isDark ? 'dark' : 'light'"
       prominent
-      elevation="4"
-      class="app-header"
+      flat
+      :class="['app-header', { 'app-header--light': !isDark }]"
     >
       <template #prepend>
-        <div class="header-icon">
-          <v-icon icon="mdi-brain" size="32" class="mr-3" />
-        </div>
+        <v-img
+          :src="logoSrc"
+          alt="Logo"
+          width="40"
+          height="40"
+          class="header-logo mr-3"
+        />
       </template>
-      
+
       <div class="header-content">
         <v-app-bar-title class="header-title">
-          <div class="title-main">Brain Dump & Timeboxing</div>
-          <div class="title-sub">
-            Daily Planner
-            <span class="version-badge">v{{ appVersion }}</span>
-          </div>
+          <span class="title-main">Brain Dump &amp; Timeboxing</span>
         </v-app-bar-title>
       </div>
 
       <template #append>
         <div class="header-actions">
+          <v-btn
+            :icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+            variant="text"
+            size="default"
+            @click="toggleTheme"
+            :title="isDark ? 'Passa al tema chiaro' : 'Passa al tema scuro'"
+          />
           <v-btn
             icon="mdi-cog"
             variant="text"
@@ -48,6 +55,7 @@
             @click="showHelp = !showHelp"
             title="Aiuto (Alt+H)"
           />
+          <span class="app-version">v{{ appVersion }}</span>
         </div>
       </template>
     </v-app-bar>
@@ -71,10 +79,28 @@
 </template>
 
 <script setup>
+import { useTheme } from 'vuetify'
+
 const config = useRuntimeConfig()
 const showHelp = ref(false)
 const showSettings = ref(false)
 const appVersion = ref(config.public.appVersion)
+
+// Light/dark theme toggle (persisted; falls back to system preference)
+const theme = useTheme()
+const isDark = computed(() => theme.global.name.value === 'dark')
+const toggleTheme = () => {
+  const next = isDark.value ? 'light' : 'dark'
+  theme.global.name.value = next
+  if (import.meta.client) {
+    localStorage.setItem('braindump-theme', next)
+  }
+}
+
+// White logo on the dark bar, full-color logo on the white (light) bar
+const iconWhiteSrc = `${config.app.baseURL}icon-white.svg`
+const iconColorSrc = `${config.app.baseURL}icon.svg`
+const logoSrc = computed(() => (isDark.value ? iconWhiteSrc : iconColorSrc))
 
 const handlePriorityToggled = (task) => {
   console.log('Priority toggled for task:', task)
@@ -110,10 +136,21 @@ onMounted(() => {
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+/* Reset element margins only. Do NOT reset padding globally: Vuetify 4 ships
+   its component styles inside an @layer, so an unlayered `* { padding: 0 }`
+   would override (and flatten) the padding of every Vuetify chip, button,
+   input, etc. The app's own elements set their padding explicitly. */
+body,
+h1, h2, h3, h4, h5, h6,
+p, figure, blockquote, dl, dd,
+ul, ol {
+  margin: 0;
 }
 
 body {
@@ -131,19 +168,18 @@ body {
 }
 
 .app-header {
-  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-secondary)) 100%) !important;
-  box-shadow: 0 4px 12px rgba(var(--v-theme-primary), 0.25) !important;
+  /* Flat bar, no shadow. Dark mode keeps the previous midnight look
+     (white title, green icons via the global primary default). */
+  box-shadow: none !important;
 }
 
-.header-icon {
-  display: flex;
-  align-items: center;
-  animation: pulse 2s infinite;
+/* Light mode: white bar with midnight title and theme-blue icons */
+.app-header--light {
+  color: #081928;
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+.app-header--light .v-btn {
+  color: #0d2540;
 }
 
 .header-content {
@@ -153,49 +189,31 @@ body {
 
 .header-title {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+  gap: 0.75rem;
 }
 
 .title-main {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  white-space: nowrap;
 }
 
-.title-sub {
-  font-size: 0.875rem;
-  font-weight: 400;
-  opacity: 0.9;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.version-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.125rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
+/* Small plain-text version, right of the help icon */
+.app-version {
+  font-size: 0.7rem;
   font-weight: 500;
-  text-transform: none;
-  letter-spacing: normal;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
-}
-
-.version-badge:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
+  opacity: 0.6;
+  margin-left: 0.25rem;
+  white-space: nowrap;
 }
 
 .header-actions {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
@@ -236,25 +254,14 @@ body {
   .title-main {
     font-size: 1.25rem;
   }
-  
-  .title-sub {
-    font-size: 0.75rem;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
-  .version-badge {
+
+  .app-version {
     font-size: 0.625rem;
-    padding: 0.0625rem 0.375rem;
   }
   
   .header-actions {
     flex-direction: column;
     gap: 0.25rem;
-  }
-  
-  .header-icon {
-    animation: none;
   }
 }
 </style>
