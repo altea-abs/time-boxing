@@ -2,14 +2,15 @@
   <v-app>
     <NuxtRouteAnnouncer />
     <v-app-bar
-      color="white"
+      :color="isDark ? 'surface-bright' : 'white'"
+      :theme="isDark ? 'dark' : 'light'"
       prominent
       flat
-      class="app-header"
+      :class="['app-header', { 'app-header--light': !isDark }]"
     >
       <template #prepend>
         <v-img
-          :src="iconSrc"
+          :src="logoSrc"
           alt="Logo"
           width="40"
           height="40"
@@ -20,7 +21,6 @@
       <div class="header-content">
         <v-app-bar-title class="header-title">
           <span class="title-main">Brain Dump &amp; Timeboxing</span>
-          <span class="version-badge">v{{ appVersion }}</span>
         </v-app-bar-title>
       </div>
 
@@ -55,6 +55,7 @@
             @click="showHelp = !showHelp"
             title="Aiuto (Alt+H)"
           />
+          <span class="app-version">v{{ appVersion }}</span>
         </div>
       </template>
     </v-app-bar>
@@ -84,7 +85,6 @@ const config = useRuntimeConfig()
 const showHelp = ref(false)
 const showSettings = ref(false)
 const appVersion = ref(config.public.appVersion)
-const iconSrc = `${config.app.baseURL}icon.svg`
 
 // Light/dark theme toggle (persisted; falls back to system preference)
 const theme = useTheme()
@@ -96,6 +96,11 @@ const toggleTheme = () => {
     localStorage.setItem('braindump-theme', next)
   }
 }
+
+// White logo on the dark bar, full-color logo on the white (light) bar
+const iconWhiteSrc = `${config.app.baseURL}icon-white.svg`
+const iconColorSrc = `${config.app.baseURL}icon.svg`
+const logoSrc = computed(() => (isDark.value ? iconWhiteSrc : iconColorSrc))
 
 const handlePriorityToggled = (task) => {
   console.log('Priority toggled for task:', task)
@@ -163,14 +168,18 @@ body {
 }
 
 .app-header {
-  /* Flat white bar — no shadow. Title and icons in brand midnight. */
+  /* Flat bar, no shadow. Dark mode keeps the previous midnight look
+     (white title, green icons via the global primary default). */
   box-shadow: none !important;
+}
+
+/* Light mode: white bar with midnight title and theme-blue icons */
+.app-header--light {
   color: #081928;
 }
 
-/* Override the global primary (green) button default for header icons */
-.app-header .v-btn {
-  color: #081928;
+.app-header--light .v-btn {
+  color: #0d2540;
 }
 
 .header-content {
@@ -193,26 +202,18 @@ body {
   white-space: nowrap;
 }
 
-.version-badge {
-  background: rgba(8, 25, 40, 0.08);
-  color: #081928;
-  padding: 0.125rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
+/* Small plain-text version, right of the help icon */
+.app-version {
+  font-size: 0.7rem;
   font-weight: 500;
-  text-transform: none;
-  letter-spacing: normal;
-  border: 1px solid rgba(8, 25, 40, 0.15);
-  transition: all 0.2s ease;
-}
-
-.version-badge:hover {
-  background: rgba(8, 25, 40, 0.12);
-  transform: scale(1.05);
+  opacity: 0.6;
+  margin-left: 0.25rem;
+  white-space: nowrap;
 }
 
 .header-actions {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
@@ -254,9 +255,8 @@ body {
     font-size: 1.25rem;
   }
 
-  .version-badge {
+  .app-version {
     font-size: 0.625rem;
-    padding: 0.0625rem 0.375rem;
   }
   
   .header-actions {

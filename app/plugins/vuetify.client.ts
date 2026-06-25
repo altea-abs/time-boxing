@@ -102,6 +102,7 @@ export default defineNuxtPlugin((nuxtApp) => {
             'info': '#2196F3',
             'warning': '#e6a817',
             'on-surface': '#181c20',
+            'on-surface-variant': '#4a5a6a',
             'outline': '#72787e',
             'outline-variant': '#c1c7ce',
             'navigationBar': '#f6f6f6',
